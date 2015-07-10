@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html" charset="utf-8">
 
     <title>Registration page</title>
-    <%--<link href="styles/style.css" rel="stylesheet" type="text/css">--%>
+    <link rel="stylesheet" href="css/main.css" type="text/css">
 </head>
 <body>
 <div>
