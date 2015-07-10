@@ -11,18 +11,31 @@
     <script src="js/gametest.js"></script>
 </head>
 <body>
-    <select id="pieceColor">
-        <option value="white">white</option>
-        <option value="black">black</option>
-    </select>
-    <button id="newGame">new game</button>
-    <input id="gameIdInput"/>
-    <button id="connectToGame">connect to game</button>
-    <button id="getGame">get game</button>
+
+    <div style="border: dodgerblue solid 2px; padding:5px; margin:5px; width: 350px; border-radius: 5px">
+        <div>Create a new game</div>
+        <label for="pieceColor">color: </label>
+        <select id="pieceColor">
+            <option value="white">white</option>
+            <option value="black">black</option>
+        </select>
+        <button id="newGame">new game</button>
+    </div>
+    <div style="border: dodgerblue solid 2px; padding:5px; margin:5px; width: 350px; border-radius: 5px">
+        <div>or Connect to the existing one</div>
+        <label for="gameIdInput">game id: </label>
+        <input id="gameIdInput"/>
+        <button id="connectToGame">connect to game</button>
+    </div>
+
+    <!--<button id="getGame">get game</button>-->
 
     <div id="board" style="width: 300px"></div>
+
     <p>Game: <span id="gameId"></span>. Status: <span id="status"></span></p>
+
     <p>FEN: <span id="fen"></span></p>
+
     <p>PGN: <span id="pgn"></span></p>
 </body>
 </html>
