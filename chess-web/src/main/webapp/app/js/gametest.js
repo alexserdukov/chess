@@ -68,7 +68,7 @@ var init = function() {
     };
 
     var cfg = {
-        pieceTheme: 'images/chesspieces/alpha/{piece}.png',
+        pieceTheme: 'img/chesspieces/alpha/{piece}.png',
         draggable: true,
         position: 'start',
         onDragStart: onDragStart,

@@ -7,5 +7,9 @@
           class="org.springframework.web.servlet.view.JstlView">
         <property name="url" value="/app/index.html" />
     </bean>
+    <bean id="game"
+          class="org.springframework.web.servlet.view.JstlView">
+        <property name="url" value="/app/game.html" />
+    </bean>
 
 </beans>
