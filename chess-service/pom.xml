@@ -13,35 +13,15 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>4.3.8.Final</version>
-        </dependency>
-
-        <dependency>
-
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${spring-version}</version>
         </dependency>
 
-
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <version>4.1.6.RELEASE</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.186</version>
+            <artifactId>chess-db</artifactId>
+            <groupId>com.javamonkeys</groupId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
 
     </dependencies>

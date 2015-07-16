@@ -1,8 +1,6 @@
 package com.javamonkeys.controller;
 
 import com.javamonkeys.api.IUserService;
-import com.javamonkeys.dao.user.IncorrectUserCredentialsException;
-import com.javamonkeys.dao.user.UserAlreadyExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;

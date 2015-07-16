@@ -33,9 +33,11 @@ public class UserServiceTest {
         headers.add("Authorization", basicAuthFilippov);
         HttpEntity<String> entity = new HttpEntity<String>(headers);
 
-        ResponseEntity<User> responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+        ResponseEntity<User> responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login",
+                HttpMethod.GET, entity, User.class);
         if (responseEntityUser.getStatusCode() == HttpStatus.BAD_REQUEST) { // user not found
-            ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/register", HttpMethod.POST, entity, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/register",
+                    HttpMethod.POST, entity, String.class);
             assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         }
 
@@ -50,7 +52,8 @@ public class UserServiceTest {
 
         responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
         if (responseEntityUser.getStatusCode() == HttpStatus.BAD_REQUEST) { // user not found
-            ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/register", HttpMethod.POST, entity, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/register",
+                    HttpMethod.POST, entity, String.class);
             assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         }
 

@@ -2,15 +2,7 @@ package com.javamonkeys.dao.game;
 
 import com.javamonkeys.dao.user.User;
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import java.io.IOException;
-
 
 @Entity
 @Table(name = "Games")

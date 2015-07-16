@@ -9,7 +9,10 @@
     <name>chess</name>
 
     <modules>
+        <module>chess-model</module>
+        <module>chess-db</module>
         <module>chess-service</module>
+        <module>chess-api</module>
         <module>chess-web</module>
     </modules>
 
