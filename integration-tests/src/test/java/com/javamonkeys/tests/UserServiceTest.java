@@ -4,7 +4,6 @@ import com.javamonkeys.dao.user.User;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -18,91 +17,84 @@ public class UserServiceTest {
     private static final String baseUrl = "http://localhost:8555";
     private CustomResponseErrorHandler customResponseErrorHandler = new CustomResponseErrorHandler();
 
+    private static ResponseEntity<User> doLogin(CustomRestTemplate restTemplate, HttpEntity entity){
+        return restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+    }
+
+    private static ResponseEntity<User> doLogout(CustomRestTemplate restTemplate, HttpEntity entity){
+        return restTemplate.exchange(baseUrl + "/api/users/logout", HttpMethod.POST, entity, User.class);
+    }
+
+    private static ResponseEntity<String> doRegister(CustomRestTemplate restTemplate, HttpEntity entity){
+        return restTemplate.exchange(baseUrl + "/api/users/register", HttpMethod.POST, entity, String.class);
+    }
+
+    private static ResponseEntity<User> doGetUser(CustomRestTemplate restTemplate, HttpEntity entity, Integer userId){
+        return restTemplate.exchange(baseUrl + "/api/users/" + userId, HttpMethod.GET, entity, User.class);
+    }
+
+    private static ResponseEntity<String> doUpdateUser(CustomRestTemplate restTemplate, HttpEntity entityUser, Integer userId){
+        return restTemplate.exchange(baseUrl + "/api/users/" + userId, HttpMethod.PUT, entityUser, String.class);
+    }
+
+    private static ResponseEntity<String> doDeleteUser(CustomRestTemplate restTemplate, HttpEntity entity, Integer userId){
+        return restTemplate.exchange(baseUrl + "/api/users/" + userId, HttpMethod.DELETE, entity, String.class);
+    }
+
     @BeforeClass
     public static void init(){
 
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(new CustomResponseErrorHandler());
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
 
-        // 1. ADD user "Filippov@javamonkeys.com", pass: 12345 if not exist
+        // 1. ADD user "Filippov@javamonkeys.com"
+        restTemplate.addBasicAuthHttpHeaders("Filippov@javamonkeys.com", "12345");
+        HttpEntity entity = new HttpEntity(restTemplate.getHttpHeaders());
 
-        // Filippov@javamonkeys.com / 12345 / in Base64
-        String basicAuthFilippov = "Basic RmlsaXBwb3ZAamF2YW1vbmtleXMuY29tOjEyMzQ1";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", basicAuthFilippov);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-        ResponseEntity<User> responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login",
-                HttpMethod.GET, entity, User.class);
+        ResponseEntity<User> responseEntityUser = doLogin(restTemplate, entity);
         if (responseEntityUser.getStatusCode() == HttpStatus.BAD_REQUEST) { // user not found
-            ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/register",
-                    HttpMethod.POST, entity, String.class);
+            ResponseEntity<String> responseEntity = doRegister(restTemplate, entity);
             assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         }
 
-        // 2. ADD user "DeleteUser@javamonkeys.com", pass: 12345 if not exist
+        // 2. ADD user "DeleteUser@javamonkeys.com"
+        restTemplate.addBasicAuthHttpHeaders("DeleteUser@javamonkeys.com", "12345");
+        entity = new HttpEntity(restTemplate.getHttpHeaders());
 
-        // DeleteUser@javamonkeys.com / 12345 / in Base64
-        String basicAuthDeleteUser = "Basic RGVsZXRlVXNlckBqYXZhbW9ua2V5cy5jb206MTIzNDU=";
-
-        headers = new HttpHeaders();
-        headers.add("Authorization", basicAuthDeleteUser);
-        entity = new HttpEntity<String>(headers);
-
-        responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+        responseEntityUser = doLogin(restTemplate, entity);
         if (responseEntityUser.getStatusCode() == HttpStatus.BAD_REQUEST) { // user not found
-            ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/register",
-                    HttpMethod.POST, entity, String.class);
+            ResponseEntity<String> responseEntity = doRegister(restTemplate, entity);
             assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         }
 
-        // 3. ADD user "UpdateUser@javamonkeys.com", pass: 12345 if not exist
+        // 3. ADD user "UpdateUser@javamonkeys.com"
+        restTemplate.addBasicAuthHttpHeaders("UpdateUser@javamonkeys.com", "12345");
+        entity = new HttpEntity(restTemplate.getHttpHeaders());
 
-        // UpdateUser@javamonkeys.com / 12345 / in Base64
-        String basicAuthUpdateUser = "Basic VXBkYXRlVXNlckBqYXZhbW9ua2V5cy5jb206MTIzNDU=";
-
-        headers = new HttpHeaders();
-        headers.add("Authorization", basicAuthUpdateUser);
-        entity = new HttpEntity<String>(headers);
-
-        responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+        responseEntityUser = doLogin(restTemplate, entity);
         if (responseEntityUser.getStatusCode() == HttpStatus.BAD_REQUEST) { // user not found
-            ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/register", HttpMethod.POST, entity, String.class);
+            ResponseEntity<String> responseEntity = doRegister(restTemplate, entity);
             assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         }
 
-        // 4. DELETE user "NewUserTest@javamonkeys.com" if exist
+        // 4. DELETE user "NewUserTest@javamonkeys.com"
+        restTemplate.addBasicAuthHttpHeaders("NewUserTest@javamonkeys.com", "12345");
+        entity = new HttpEntity(restTemplate.getHttpHeaders());
 
-        // NewUserTest@javamonkeys.com / 12345 / in Base64
-        String basicAuthNewUserTest = "Basic TmV3VXNlckBqYXZhbW9ua2V5cy5jb206MTIzNDU=";
-
-        headers = new HttpHeaders();
-        headers.add("Authorization", basicAuthNewUserTest);
-        entity = new HttpEntity<String>(headers);
-
-        responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+        responseEntityUser = doLogin(restTemplate, entity);
         if (responseEntityUser.getStatusCode() == HttpStatus.OK){
             User currentUser = responseEntityUser.getBody();
-
-            ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/" + currentUser.getId(), HttpMethod.DELETE, entity, String.class);
+            ResponseEntity<String> responseEntity = doDeleteUser(restTemplate, entity, currentUser.getId());
             assertEquals(responseEntity.getStatusCode(), HttpStatus.NO_CONTENT);
         }
 
         // 4. DELETE user "ComplexTestUser@javamonkeys.com" if exist
+        restTemplate.addBasicAuthHttpHeaders("ComplexTestUser@javamonkeys.com", "12345");
+        entity = new HttpEntity(restTemplate.getHttpHeaders());
 
-        // ComplexTestUser@javamonkeys.com / 12345 / in Base64
-        String basicAuthComplexUser = "Basic Q29tcGxleFRlc3RVc2VyQGphdmFtb25rZXlzLmNvbToxMjM0NQ==";
-
-        headers = new HttpHeaders();
-        headers.add("Authorization", basicAuthComplexUser);
-        entity = new HttpEntity<String>(headers);
-
-        responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+        responseEntityUser = doLogin(restTemplate, entity);
         if (responseEntityUser.getStatusCode() == HttpStatus.OK){
             User currentUser = responseEntityUser.getBody();
-
-            ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/" + currentUser.getId(), HttpMethod.DELETE, entity, String.class);
+            ResponseEntity<String> responseEntity = doDeleteUser(restTemplate, entity, currentUser.getId());
             assertEquals(responseEntity.getStatusCode(), HttpStatus.NO_CONTENT);
         }
     }
@@ -112,17 +104,11 @@ public class UserServiceTest {
     @Test
     public void testRegisterUserAlreadyExistsException() {
 
-        // Filippov@javamonkeys.com / 12345 / in Base64
-        String basicAuth = "Basic RmlsaXBwb3ZAamF2YW1vbmtleXMuY29tOjEyMzQ1";
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
+        restTemplate.addBasicAuthHttpHeaders("Filippov@javamonkeys.com", "12345");
+        HttpEntity entity = new HttpEntity(restTemplate.getHttpHeaders());
 
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/register", HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> responseEntity = doRegister(restTemplate, entity);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(null, responseEntity.getBody());
     }
@@ -130,36 +116,29 @@ public class UserServiceTest {
     @Test
     public void testRegisterIncorrectAuthorization() {
 
-        HttpEntity<String> entity;
-        HttpHeaders headers;
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
 
         // NULL auth
-        headers = new HttpHeaders();
-        headers.add("Authorization", null);
-        entity = new HttpEntity<String>(headers);
+        restTemplate.addHttpHeader("Authorization", null);
+        HttpEntity entity = new HttpEntity(restTemplate.getHttpHeaders());
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/register", HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> responseEntity = doRegister(restTemplate, entity);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(null, responseEntity.getBody());
 
         // Empty string auth
-        headers.clear();
-        headers.add("Authorization", "");
-        entity = new HttpEntity<String>(headers);
+        restTemplate.addHttpHeader("Authorization", "");
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseEntity = restTemplate.exchange(baseUrl + "/api/users/register", HttpMethod.POST, entity, String.class);
+        responseEntity = doRegister(restTemplate, entity);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(null, responseEntity.getBody());
 
         // Incorrect BASE64 string auth
-        headers.clear();
-        headers.add("Authorization", "Basic 1234567890abcdefghijk");
-        entity = new HttpEntity<String>(headers);
+        restTemplate.addHttpHeader("Authorization", "Basic 1234567890abcdefghijk");
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseEntity = restTemplate.exchange(baseUrl + "/api/users/register", HttpMethod.POST, entity, String.class);
+        responseEntity = doRegister(restTemplate, entity);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(null, responseEntity.getBody());
 
@@ -168,17 +147,11 @@ public class UserServiceTest {
     @Test
     public void testRegisterNewUser() {
 
-        // NewUserTest@javamonkeys.com / 12345 / in Base64
-        String basicAuth = "Basic TmV3VXNlckBqYXZhbW9ua2V5cy5jb206MTIzNDU=";
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
+        restTemplate.addBasicAuthHttpHeaders("NewUserTest@javamonkeys.com", "12345");
+        HttpEntity<String> entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/register", HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> responseEntity = doRegister(restTemplate, entity);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(null, responseEntity.getBody());
     }
@@ -188,17 +161,11 @@ public class UserServiceTest {
     @Test
     public void testLoginUserAlreadyExists() {
 
-        // Filippov@javamonkeys.com / 12345 / in Base64
-        String basicAuth = "Basic RmlsaXBwb3ZAamF2YW1vbmtleXMuY29tOjEyMzQ1";
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
+        restTemplate.addBasicAuthHttpHeaders("Filippov@javamonkeys.com", "12345");
+        HttpEntity<String> entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-        ResponseEntity<User> responseEntity = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+        ResponseEntity<User> responseEntity = doLogin(restTemplate, entity);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertNotNull(responseEntity.getBody());
         assertEquals("Filippov@javamonkeys.com".toLowerCase(), responseEntity.getBody().getEmail().toLowerCase());
@@ -207,17 +174,11 @@ public class UserServiceTest {
     @Test
     public void testLoginUserNotFound() {
 
-        // UserNotFound@javamonkeys.com / 12345 / in Base64
-        String basicAuth = "Basic VXNlck5vdEZvdW5kQGphdmFtb25rZXlzLmNvbToxMjM0NQ==";
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
+        restTemplate.addBasicAuthHttpHeaders("UserNotFound@javamonkeys.com", "12345");
+        HttpEntity<User> entity = new HttpEntity<User>(restTemplate.getHttpHeaders());
 
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, String.class);
+        ResponseEntity<User> responseEntity = doLogin(restTemplate, entity);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(null, responseEntity.getBody());
     }
@@ -225,36 +186,29 @@ public class UserServiceTest {
     @Test
     public void testLoginIncorrectAuthorization() {
 
-        HttpEntity<String> entity;
-        HttpHeaders headers;
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
 
         // NULL auth
-        headers = new HttpHeaders();
-        headers.add("Authorization", null);
-        entity = new HttpEntity<String>(headers);
+        restTemplate.addHttpHeader("Authorization", null);
+        HttpEntity<User> entity = new HttpEntity<User>(restTemplate.getHttpHeaders());
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, String.class);
+        ResponseEntity<User> responseEntity = doLogin(restTemplate, entity);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(null, responseEntity.getBody());
 
         // Empty string auth
-        headers.clear();
-        headers.add("Authorization", "");
-        entity = new HttpEntity<String>(headers);
+        restTemplate.addHttpHeader("Authorization", "");
+        entity = new HttpEntity<User>(restTemplate.getHttpHeaders());
 
-        responseEntity = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, String.class);
+        responseEntity = doLogin(restTemplate, entity);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(null, responseEntity.getBody());
 
         // Incorrect BASE64 string auth
-        headers.clear();
-        headers.add("Authorization", "Basic 1234567890abcdefghijk");
-        entity = new HttpEntity<String>(headers);
+        restTemplate.addHttpHeader("Authorization", "Basic 1234567890abcdefghijk");
+        entity = new HttpEntity<User>(restTemplate.getHttpHeaders());
 
-        responseEntity = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, String.class);
+        responseEntity = doLogin(restTemplate, entity);
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
         assertEquals(null, responseEntity.getBody());
 
@@ -265,35 +219,30 @@ public class UserServiceTest {
     @Test
     public void testLogout() {
 
-        // Filippov@javamonkeys.com / 12345 / in Base64
-        String basicAuth = "Basic RmlsaXBwb3ZAamF2YW1vbmtleXMuY29tOjEyMzQ1";
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
+        restTemplate.addBasicAuthHttpHeaders("Filippov@javamonkeys.com", "12345");
 
         // LOGIN
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        HttpEntity<String> entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        ResponseEntity<User> responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+        ResponseEntity<User> responseEntityUser = doLogin(restTemplate, entity);
         User beforeUser = responseEntityUser.getBody();
 
-        // LOGOUT
-        headers = new HttpHeaders();
-        headers.add("id", Integer.toString(beforeUser.getId()));
-        entity = new HttpEntity<String>(headers);
+        restTemplate.clearHttpHeaders();
 
-        ResponseEntity responseEntity = restTemplate.exchange(baseUrl + "/api/users/logout", HttpMethod.POST, entity, User.class);
+        // LOGOUT
+        restTemplate.addHttpHeader("id", Integer.toString(beforeUser.getId()));
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
+
+        ResponseEntity responseEntity = doLogout(restTemplate, entity);
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
 
         // LOGOUT with incorrect id
-        headers = new HttpHeaders();
-        headers.add("id", "-999");
-        entity = new HttpEntity<String>(headers);
+        restTemplate.addHttpHeader("id", "-999");
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseEntity = restTemplate.exchange(baseUrl + "/api/users/logout", HttpMethod.POST, entity, User.class);
+        responseEntity = doLogout(restTemplate, entity);
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
     }
@@ -303,37 +252,31 @@ public class UserServiceTest {
     @Test
     public void testGetUser() {
 
-        // Filippov@javamonkeys.com / 12345 / in Base64
-        String basicAuth = "Basic RmlsaXBwb3ZAamF2YW1vbmtleXMuY29tOjEyMzQ1";
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
+        restTemplate.addBasicAuthHttpHeaders("Filippov@javamonkeys.com", "12345");
 
         // LOGIN for check user id
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        HttpEntity<String> entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        ResponseEntity<User> responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+        ResponseEntity<User> responseEntityUser = doLogin(restTemplate, entity);
         User firstUser = responseEntityUser.getBody();
+        assertNotNull(firstUser);
+        assertNotNull(firstUser.getId());
 
         // Correct user id
-        headers = new HttpHeaders();
-        entity = new HttpEntity<String>(headers);
+        restTemplate.clearHttpHeaders();
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/" + firstUser.getId(), HttpMethod.GET, entity, User.class);
+        responseEntityUser = doGetUser(restTemplate, entity, firstUser.getId());
         User secondUser = responseEntityUser.getBody();
-
         assertEquals(HttpStatus.OK, responseEntityUser.getStatusCode());
         assertEquals(firstUser.getId(), secondUser.getId());
         assertEquals(firstUser.getEmail(), secondUser.getEmail());
 
         // Incorrect user id
-        headers = new HttpHeaders();
-        entity = new HttpEntity<String>(headers);
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/-999", HttpMethod.GET, entity, User.class);
-
+        responseEntityUser = doGetUser(restTemplate, entity, -999);
         assertEquals(HttpStatus.OK, responseEntityUser.getStatusCode());
         assertNull(responseEntityUser.getBody());
     }
@@ -343,44 +286,36 @@ public class UserServiceTest {
     @Test
     public void testDeleteUser() {
 
-        // DeleteUser@javamonkeys.com / 12345 / in Base64
-        String basicAuth = "Basic RGVsZXRlVXNlckBqYXZhbW9ua2V5cy5jb206MTIzNDU=";
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
+        restTemplate.addBasicAuthHttpHeaders("DeleteUser@javamonkeys.com", "12345");
 
         // LOGIN for check user id
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        HttpEntity<String> entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        ResponseEntity<User> responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+        ResponseEntity<User> responseEntityUser = doLogin(restTemplate, entity);
         User currentUser = responseEntityUser.getBody();
+        assertNotNull(currentUser);
+        assertNotNull(currentUser.getId());
 
         // DELETE user
-        headers = new HttpHeaders();
-        entity = new HttpEntity<String>(headers);
+        restTemplate.clearHttpHeaders();
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        ResponseEntity responseEntity = restTemplate.exchange(baseUrl + "/api/users/" + currentUser.getId(), HttpMethod.DELETE, entity, String.class);
-
+        ResponseEntity responseEntity = doDeleteUser(restTemplate, entity, currentUser.getId());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
 
         // Check user
-        headers = new HttpHeaders();
-        entity = new HttpEntity<String>(headers);
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/" + currentUser.getId(), HttpMethod.GET, entity, User.class);
-
+        responseEntityUser = doGetUser(restTemplate, entity, currentUser.getId());
         assertEquals(HttpStatus.OK, responseEntityUser.getStatusCode());
         assertNull(responseEntityUser.getBody());
 
         // Incorrect user id
-        headers = new HttpHeaders();
-        entity = new HttpEntity<String>(headers);
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseEntity = restTemplate.exchange(baseUrl + "/api/users/-999", HttpMethod.DELETE, entity, String.class);
-
+        responseEntity = doDeleteUser(restTemplate, entity, -999);
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
     }
@@ -390,19 +325,15 @@ public class UserServiceTest {
     @Test
     public void testUpdateUser() {
 
-        // UpdateUser@javamonkeys.com / 12345 / in Base64
-        String basicAuth = "Basic VXBkYXRlVXNlckBqYXZhbW9ua2V5cy5jb206MTIzNDU=";
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
+        restTemplate.addBasicAuthHttpHeaders("UpdateUser@javamonkeys.com", "12345");
 
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
+        HttpEntity<String> entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        // LOGIN for check user id
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-        ResponseEntity<User> responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
+        ResponseEntity<User> responseEntityUser = doLogin(restTemplate, entity);
         User beforeUser = responseEntityUser.getBody();
+        assertNotNull(beforeUser);
+        assertNotNull(beforeUser.getId());
 
         // UPDATE user
         String beforeName = beforeUser.getName();
@@ -416,7 +347,7 @@ public class UserServiceTest {
             Instant instant = newLocalDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant();
             afterBirthDate = Date.from(instant);
         } else {
-             afterBirthDate = null;
+            afterBirthDate = null;
         }
 
         assertNotEquals(beforeName, afterName);
@@ -425,19 +356,17 @@ public class UserServiceTest {
         beforeUser.setName(afterName);
         beforeUser.setBirthDate(afterBirthDate);
 
-        headers = new HttpHeaders();
-        HttpEntity<User> entityUser = new HttpEntity<User>(beforeUser, headers);
+        restTemplate.clearHttpHeaders();
+        HttpEntity<User> entityUser = new HttpEntity<User>(beforeUser, restTemplate.getHttpHeaders());
 
-        ResponseEntity responseEntity = restTemplate.exchange(baseUrl + "/api/users/" + beforeUser.getId(), HttpMethod.PUT, entityUser, String.class);
-
+        ResponseEntity responseEntity = doUpdateUser(restTemplate, entityUser, beforeUser.getId());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
 
         // Check user
-        headers = new HttpHeaders();
-        entity = new HttpEntity<String>(headers);
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseEntityUser = restTemplate.exchange(baseUrl + "/api/users/" + beforeUser.getId(), HttpMethod.GET, entity, User.class);
+        responseEntityUser = doGetUser(restTemplate, entity, beforeUser.getId());
         User afterUser = responseEntityUser.getBody();
 
         assertEquals(HttpStatus.OK, responseEntityUser.getStatusCode());
@@ -447,11 +376,9 @@ public class UserServiceTest {
         assertEquals(afterBirthDate, afterUser.getBirthDate());
 
         // Incorrect user id
-        headers = new HttpHeaders();
-        entityUser = new HttpEntity<User>(beforeUser, headers);
+        entityUser = new HttpEntity<User>(beforeUser, restTemplate.getHttpHeaders());
 
-        responseEntity = restTemplate.exchange(baseUrl + "/api/users/-999", HttpMethod.PUT, entityUser, User.class);
-
+        responseEntity = doUpdateUser(restTemplate, entityUser, -999);
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
     }
@@ -461,42 +388,34 @@ public class UserServiceTest {
     @Test
     public void complexUserTest(){
 
-        // ComplexTestUser@javamonkeys.com / 12345 / in Base64
-        String basicAuth = "Basic Q29tcGxleFRlc3RVc2VyQGphdmFtb25rZXlzLmNvbToxMjM0NQ==";
+        CustomRestTemplate restTemplate = new CustomRestTemplate();
+        restTemplate.addBasicAuthHttpHeaders("ComplexTestUser@javamonkeys.com", "12345");
+
         User newUser;
 
         // 1. LOGIN (CHECK THAT USER NOT FOUND)
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setErrorHandler(customResponseErrorHandler);
+        HttpEntity<String> entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-        ResponseEntity<String> responseEntity = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, String.class);
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals(null, responseEntity.getBody());
+        ResponseEntity<User> responseEntityUser = doLogin(restTemplate, entity);
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntityUser.getStatusCode());
+        assertEquals(null, responseEntityUser.getBody());
 
         // 2. REGISTER
-        headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        HttpEntity<User> userEntity = new HttpEntity<User>(headers);
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseEntity = restTemplate.exchange(baseUrl + "/api/users/register", HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> responseEntity = doRegister(restTemplate, entity);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
         assertEquals(null, responseEntity.getBody());
 
         // 3. LOGIN (USER MAY EXISTS)
-        headers = new HttpHeaders();
-        headers.add("Authorization", basicAuth);
-        entity = new HttpEntity<String>(headers);
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        ResponseEntity<User> responseUserEntity = restTemplate.exchange(baseUrl + "/api/users/login", HttpMethod.GET, entity, User.class);
-        newUser = responseUserEntity.getBody();
-        assertEquals(HttpStatus.OK, responseUserEntity.getStatusCode());
-        assertNotNull(responseUserEntity.getBody());
-        assertEquals("ComplexTestUser@javamonkeys.com".toLowerCase(), responseUserEntity.getBody().getEmail().toLowerCase());
-        assertEquals("12345", responseUserEntity.getBody().getPassword());
+        responseEntityUser = doLogin(restTemplate, entity);
+        newUser = responseEntityUser.getBody();
+        assertEquals(HttpStatus.OK, responseEntityUser.getStatusCode());
+        assertNotNull(responseEntityUser.getBody());
+        assertEquals("ComplexTestUser@javamonkeys.com".toLowerCase(), responseEntityUser.getBody().getEmail().toLowerCase());
+        assertEquals("12345", responseEntityUser.getBody().getPassword());
 
 
         // 4. UPDATE
@@ -521,41 +440,41 @@ public class UserServiceTest {
         newUser.setBirthDate(afterBirthDate);
         newUser.setPassword(afterPass);
 
-        headers = new HttpHeaders();
-        HttpEntity<User> entityUser = new HttpEntity<User>(newUser, headers);
+        restTemplate.clearHttpHeaders();
+        HttpEntity<User> entityUser = new HttpEntity<User>(newUser, restTemplate.getHttpHeaders());
 
-        responseEntity = restTemplate.exchange(baseUrl + "/api/users/" + newUser.getId(), HttpMethod.PUT, entityUser, String.class);
+        responseEntity = doUpdateUser(restTemplate, entityUser, newUser.getId());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
 
         // 5. GET USER (TO CHECK UPDATES)
-        headers = new HttpHeaders();
-        entity = new HttpEntity<String>(headers);
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseUserEntity = restTemplate.exchange(baseUrl + "/api/users/" + newUser.getId(), HttpMethod.GET, entity, User.class);
-        User updateUser = responseUserEntity.getBody();
+        responseEntityUser = doGetUser(restTemplate, entity, newUser.getId());
+        User updateUser = responseEntityUser.getBody();
 
-        assertEquals(HttpStatus.OK, responseUserEntity.getStatusCode());
+        assertEquals(HttpStatus.OK, responseEntityUser.getStatusCode());
         assertNotNull(updateUser);
+        assertNotNull(updateUser.getId());
 
         assertEquals(afterName, updateUser.getName());
         assertEquals(afterPass, updateUser.getPassword());
         assertEquals(afterBirthDate, updateUser.getBirthDate());
 
         // 6. DELETE USER
-        headers = new HttpHeaders();
-        entity = new HttpEntity<String>(headers);
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseEntity = restTemplate.exchange(baseUrl + "/api/users/" + updateUser.getId(), HttpMethod.DELETE, entity, String.class);
+        responseEntity = doDeleteUser(restTemplate, entity, updateUser.getId());
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
 
         // Check user
-        headers = new HttpHeaders();
-        entity = new HttpEntity<String>(headers);
+        entity = new HttpEntity<String>(restTemplate.getHttpHeaders());
 
-        responseUserEntity = restTemplate.exchange(baseUrl + "/api/users/" + updateUser.getId(), HttpMethod.GET, entity, User.class);
-        assertEquals(HttpStatus.OK, responseUserEntity.getStatusCode());
-        assertNull(responseUserEntity.getBody());
+        responseEntityUser = doGetUser(restTemplate, entity, updateUser.getId());
+        assertEquals(HttpStatus.OK, responseEntityUser.getStatusCode());
+        assertNull(responseEntityUser.getBody());
     }
+
+
 }
