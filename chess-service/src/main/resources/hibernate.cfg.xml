@@ -5,8 +5,9 @@
 <hibernate-configuration>
 
     <session-factory>
-        <mapping class="com.javamonkeys.dao.user.User"/>
-        <mapping class="com.javamonkeys.dao.user.UserAccessGroup"/>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <mapping class="com.javamonkeys.entity.user.User"/>
+        <mapping class="com.javamonkeys.entity.useraccessgroup.UserAccessGroup"/>
         <mapping class="com.javamonkeys.dao.game.Game"/>
         <mapping class="com.javamonkeys.dao.game.Turn"/>
     </session-factory>
