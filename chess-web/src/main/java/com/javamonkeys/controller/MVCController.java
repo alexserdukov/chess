@@ -1,6 +1,6 @@
 package com.javamonkeys.controller;
 
-import com.javamonkeys.api.IUserService;
+import com.javamonkeys.controller.user.IUserController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -20,7 +20,7 @@ import javax.inject.Inject;
 public class MVCController {
 
     @Inject
-    IUserService userService;
+    IUserController userService;
 
     @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
     public ModelAndView index() {

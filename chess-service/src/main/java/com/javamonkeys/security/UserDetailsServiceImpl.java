@@ -1,7 +1,7 @@
 package com.javamonkeys.security;
 
 import com.javamonkeys.dao.user.IUserDao;
-import com.javamonkeys.dao.user.User;
+import com.javamonkeys.entity.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

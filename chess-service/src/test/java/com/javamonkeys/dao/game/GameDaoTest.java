@@ -1,8 +1,7 @@
 package com.javamonkeys.dao.game;
 
 import com.javamonkeys.dao.user.*;
-import org.junit.After;
-import org.junit.Before;
+import com.javamonkeys.entity.user.User;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +12,6 @@ import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import static org.junit.Assert.*;
 

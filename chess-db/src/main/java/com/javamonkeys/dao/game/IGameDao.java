@@ -1,10 +1,8 @@
 package com.javamonkeys.dao.game;
 
-import com.javamonkeys.dao.user.User;
+import com.javamonkeys.entity.user.User;
 
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Date;
 
 public interface IGameDao {
 

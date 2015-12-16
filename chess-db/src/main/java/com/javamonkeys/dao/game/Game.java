@@ -1,6 +1,7 @@
 package com.javamonkeys.dao.game;
 
-import com.javamonkeys.dao.user.User;
+import com.javamonkeys.entity.user.User;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -50,17 +51,15 @@ public class Game {
     @Enumerated(EnumType.STRING)
     private GameStatus status;
 
-    public Game(){}
+    public Game() {
+    }
 
     public Game(User user, Boolean isWhite, long gameLength) {
         setMatchDate(new Date());
 
-        if (isWhite)
-        {
+        if (isWhite) {
             setWhite(user);
-        }
-        else
-        {
+        } else {
             setBlack(user);
         }
     }

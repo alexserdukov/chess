@@ -3,8 +3,7 @@ package com.javamonkeys.api;
 import com.javamonkeys.dao.game.*;
 import com.javamonkeys.dao.user.*;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
+import com.javamonkeys.entity.user.User;
 import org.hibernate.SessionFactory;
 
 import org.springframework.http.HttpStatus;
@@ -13,9 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 //import com.fasterxml.jackson.annotation.*;
 

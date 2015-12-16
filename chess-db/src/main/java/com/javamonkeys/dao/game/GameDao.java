@@ -6,11 +6,10 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.javamonkeys.dao.user.User;
+import com.javamonkeys.entity.user.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 @Repository
 public class GameDao implements IGameDao {

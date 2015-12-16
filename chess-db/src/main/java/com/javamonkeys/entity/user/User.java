@@ -1,25 +1,23 @@
-package com.javamonkeys.dao.user;
+package com.javamonkeys.entity.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
+import com.javamonkeys.entity.useraccessgroup.UserAccessGroup;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "Users")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
-    @JsonIgnore
     @Column(name = "password")
     private String password;
 
@@ -29,12 +27,8 @@ public class User {
     @Column(name = "birthDate")
     private Date birthDate;
 
-    @Column(name = "token")
-    private String token;
-
     @ManyToOne
-    @NotFound(action = NotFoundAction.IGNORE)
-    @JoinColumn(name = "userAccessGroup_id")
+    @JoinColumn(name = "userAccessGroupId")
     private UserAccessGroup userAccessGroup;
 
     public User(){}
@@ -44,21 +38,8 @@ public class User {
         setPassword(password);
     }
 
-    public User(String email, String password, Date birthDate){
-        setEmail(email);
-        setPassword(password);
-        setBirthDate(birthDate);
-    }
-
-    public User(String email, String password, UserAccessGroup userAccessGroup){
-        setEmail(email);
-        setPassword(password);
-        setUserAccessGroup(userAccessGroup);
-    }
-
     public User(String email, String password, Date birthDate, UserAccessGroup userAccessGroup){
-        setEmail(email);
-        setPassword(password);
+        this(email, password);
         setBirthDate(birthDate);
         setUserAccessGroup(userAccessGroup);
     }
@@ -144,36 +125,44 @@ public class User {
     }
 
     /**
-     * Get token.
-     * @return current user token
+     * Get user name.
+     * @return current user name
      */
-    public String getToken() {
-        return token;
-    }
-
-    /**
-     * Set user token.
-     * @param token new user token
-     */
-    public void setToken(String token) {
-        this.token = token;
-    }
-
     public String getName() {
         return name;
     }
 
+    /**
+     * Set user name.
+     * @param name new user name
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-    // TODO - refactor usages / delete method
-    public void loadValues(User sourceUser){
-        if (sourceUser != null) {
-            setName(sourceUser.getName());
-            setBirthDate(sourceUser.getBirthDate());
-            setUserAccessGroup(sourceUser.getUserAccessGroup());
-            setPassword(sourceUser.getPassword());
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (id != null ? !id.equals(user.id) : user.id != null) return false;
+        if (email != null ? !email.equals(user.email) : user.email != null) return false;
+        if (password != null ? !password.equals(user.password) : user.password != null) return false;
+        if (name != null ? !name.equals(user.name) : user.name != null) return false;
+        if (birthDate != null ? !birthDate.equals(user.birthDate) : user.birthDate != null) return false;
+        return !(userAccessGroup != null ? !userAccessGroup.equals(user.userAccessGroup) : user.userAccessGroup != null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (password != null ? password.hashCode() : 0);
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (birthDate != null ? birthDate.hashCode() : 0);
+        result = 31 * result + (userAccessGroup != null ? userAccessGroup.hashCode() : 0);
+        return result;
     }
 }
