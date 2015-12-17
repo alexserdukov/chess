@@ -68,7 +68,6 @@ public class UserControllerTest {
 
     @BeforeClass
     public static void init() {
-
         CustomRestTemplate restTemplate = new CustomRestTemplate();
 
         // Delete "newUser@javamonkeys.com" if exists
@@ -112,7 +111,7 @@ public class UserControllerTest {
             assertNotNull(updateUser);
         }
 
-        // Create user "existingUser@javamonkeys.com"
+        // Create "test user group"
         restTemplate.clearHttpHeaders();
         restTemplate.addHttpHeader("name", "test user group");
         restTemplate.addHttpHeader("isAdmin", Boolean.toString(true));
@@ -127,18 +126,16 @@ public class UserControllerTest {
 
     @AfterClass
     public static void clearTestData() {
-
         CustomRestTemplate restTemplate = new CustomRestTemplate();
 
-        assertEquals(HttpStatus.NO_CONTENT, doDeleteUser(restTemplate, existingUser.getId()).getStatusCode());
-        assertEquals(HttpStatus.NO_CONTENT, doDeleteUser(restTemplate, updateUser.getId()).getStatusCode());
-        assertEquals(HttpStatus.NO_CONTENT, doDeleteUser(restTemplate, deleteUser.getId()).getStatusCode());
+        doDeleteUser(restTemplate, existingUser.getId());
+        doDeleteUser(restTemplate, updateUser.getId());
+        doDeleteUser(restTemplate, deleteUser.getId());
+        doDeleteUserAccessGroup(restTemplate, testGroup.getId());
 
         User user = doGetUserByEmail(restTemplate, "newUser@mail.com").getBody();
         if (user != null)
-            assertEquals(HttpStatus.NO_CONTENT, doDeleteUser(restTemplate, user.getId()).getStatusCode());
-
-        assertEquals(HttpStatus.NO_CONTENT, doDeleteUserAccessGroup(restTemplate, testGroup.getId()).getStatusCode());
+            doDeleteUser(restTemplate, user.getId());
     }
 
     /* Create new user
@@ -146,8 +143,8 @@ public class UserControllerTest {
     * Should return HttpStatus.CREATED */
     @Test
     public void createUserTest() {
-        String email = "newUser@mail.com";
-        String password = "12345";
+        final String email = "newUser@mail.com";
+        final String password = "12345";
 
         CustomRestTemplate restTemplate = new CustomRestTemplate();
         restTemplate.addBasicAuthHttpHeaders(email, password);
@@ -374,6 +371,6 @@ public class UserControllerTest {
         assertNull(responseEntity.getBody());
 
         // Check update user
-        assertNull(doGetUserByEmail(restTemplate, email).getBody());
+        assertNull(doGetUserByEmail(restTemplate, newEmail).getBody());
     }
 }
