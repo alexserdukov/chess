@@ -74,7 +74,7 @@ public class MVCController {
         ModelAndView model = new ModelAndView();
 
 
-        ResponseEntity responseEntity = userService.register(authorization);
+        ResponseEntity responseEntity = userService.createUser(authorization);
         if (responseEntity.getStatusCode() == HttpStatus.CREATED) {
             model.addObject("msg", "You have been successfully registered! Please, login!");
             model.setViewName("login");
