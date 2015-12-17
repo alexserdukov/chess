@@ -11,7 +11,7 @@ import java.util.Date;
 
 import static org.junit.Assert.*;
 
-public class UserServiceTest {
+public class UserControllerTest {
 
     private static final String baseUrl = "http://localhost:8555";
     private static User existingUser, updateUser, deleteUser;
