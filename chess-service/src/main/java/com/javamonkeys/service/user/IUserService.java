@@ -6,7 +6,7 @@ import com.javamonkeys.entity.useraccessgroup.UserAccessGroup;
 import java.util.Date;
 
 public interface IUserService {
-    User createUser(String email, String password, Date birthDate, UserAccessGroup userAccessGroup);
+    User createUser(String email, String password, Date birthDate, String name, UserAccessGroup userAccessGroup);
 
     User getUserById(Integer id);
 

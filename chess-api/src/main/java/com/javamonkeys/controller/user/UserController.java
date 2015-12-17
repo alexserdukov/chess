@@ -24,7 +24,7 @@ public class UserController implements IUserController {
     public ResponseEntity<User> createUser(@RequestHeader(value = "Authorization") String authorization) {
         String[] credentials = getCredentialsFromBase64String(authorization);
         if (credentials != null) {
-            User user = userService.createUser(credentials[0], credentials[1], null, null);
+            User user = userService.createUser(credentials[0], credentials[1], null, null, null);
             if (user != null)
                 return new ResponseEntity<>(user, HttpStatus.CREATED);
         }

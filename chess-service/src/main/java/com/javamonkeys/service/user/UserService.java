@@ -17,7 +17,7 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional
-    public User createUser(String email, String password, Date birthDate, UserAccessGroup userAccessGroup) {
+    public User createUser(String email, String password, Date birthDate, String name, UserAccessGroup userAccessGroup) {
         if (email == null
                 || password == null
                 || email.isEmpty()
@@ -29,7 +29,7 @@ public class UserService implements IUserService {
         if (userDao.getUserByEmail(email) != null)
             return null;
 
-        User user = new User(email, password, birthDate, userAccessGroup);
+        User user = new User(email, password, birthDate, name, userAccessGroup);
         return userDao.createUser(user);
     }
 
