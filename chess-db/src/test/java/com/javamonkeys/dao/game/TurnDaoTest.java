@@ -2,6 +2,7 @@ package com.javamonkeys.dao.game;
 
 import com.javamonkeys.dao.user.IUserDao;
 import com.javamonkeys.entity.user.User;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -14,6 +15,7 @@ import java.util.Date;
 
 import static org.junit.Assert.assertNotNull;
 
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:test-dao-config.xml"})
 @Transactional
