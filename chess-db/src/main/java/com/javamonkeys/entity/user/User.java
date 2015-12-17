@@ -38,9 +38,10 @@ public class User implements Serializable {
         setPassword(password);
     }
 
-    public User(String email, String password, Date birthDate, UserAccessGroup userAccessGroup){
+    public User(String email, String password, Date birthDate, String name, UserAccessGroup userAccessGroup){
         this(email, password);
         setBirthDate(birthDate);
+        setName(name);
         setUserAccessGroup(userAccessGroup);
     }
 
