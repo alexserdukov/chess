@@ -24,8 +24,6 @@ public class UserService implements IUserService {
                 || password.isEmpty())
             return null;
 
-        email = email.trim();
-        password = password.trim();
         if (userDao.getUserByEmail(email) != null)
             return null;
 

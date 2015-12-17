@@ -18,7 +18,6 @@ public class UserAccessGroupService implements IUserAccessGroupService {
                 || name.isEmpty())
             return null;
 
-        name = name.trim();
         if (userAccessGroupDao.getUserAccessGroupByName(name) != null)
             return null;
 
