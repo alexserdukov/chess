@@ -36,7 +36,7 @@ public class UserAccessGroupController implements IUserAccessGroupController {
     }
 
     @Override
-    @RequestMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<UserAccessGroup> getUserAccessGroupByName(@RequestParam("name") String name) {
         UserAccessGroup group = userAccessGroupService.getUserAccessGroupByName(name);
         return (group == null)

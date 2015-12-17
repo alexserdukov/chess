@@ -4,6 +4,7 @@ import com.javamonkeys.dao.useraccessgroup.IUserAccessGroupDao;
 import com.javamonkeys.entity.useraccessgroup.UserAccessGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserAccessGroupService implements IUserAccessGroupService {
@@ -12,6 +13,7 @@ public class UserAccessGroupService implements IUserAccessGroupService {
     IUserAccessGroupDao userAccessGroupDao;
 
     @Override
+    @Transactional
     public UserAccessGroup createUserAccessGroup(String name, Boolean isAdmin) {
         if (name == null
                 || isAdmin == null
@@ -26,6 +28,7 @@ public class UserAccessGroupService implements IUserAccessGroupService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserAccessGroup getUserAccessGroupById(Integer id) {
         if (id == null)
             return null;
@@ -34,6 +37,7 @@ public class UserAccessGroupService implements IUserAccessGroupService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserAccessGroup getUserAccessGroupByName(String name) {
         if (name == null)
             return null;
@@ -42,6 +46,7 @@ public class UserAccessGroupService implements IUserAccessGroupService {
     }
 
     @Override
+    @Transactional
     public boolean updateUserAccessGroup(Integer id, UserAccessGroup group) {
         if (id == null || group == null)
             return false;
@@ -57,6 +62,7 @@ public class UserAccessGroupService implements IUserAccessGroupService {
     }
 
     @Override
+    @Transactional
     public boolean deleteUserAccessGroup(Integer id) {
         if (id == null)
             return false;

@@ -41,7 +41,7 @@ public class UserController implements IUserController {
     }
 
     @Override
-    @RequestMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<User> getUserByEmail(@RequestParam("email") String email) {
         User user = userService.getUserByEmail(email);
         return  (user == null)
