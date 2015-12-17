@@ -33,7 +33,7 @@ public class UserAccessGroupDao extends AbstractDao implements IUserAccessGroupD
     }
 
     public boolean updateUserAccessGroup(UserAccessGroup group) {
-        delete(group);
+        persist(group);
         return true;
     }
 

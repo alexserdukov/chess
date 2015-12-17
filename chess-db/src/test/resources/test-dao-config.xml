@@ -14,22 +14,13 @@
     <context:annotation-config/>
     <context:component-scan base-package="com.javamonkeys.dao"/>
 
-    <jdbc:embedded-database id="dataSource" type="H2">
-        <jdbc:script location="classpath*:sql/schema.sql"/>
-        <jdbc:script location="classpath*:sql/test-data.sql"/>
-    </jdbc:embedded-database>
+    <jdbc:embedded-database id="dataSource" type="H2"/>
 
     <!-- Hibernate 4 SessionFactory Bean definition -->
     <bean id="hibernateSessionFactory"
           class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="configLocation" value="classpath:hibernate.cfg.xml"/>
-        <property name="packagesToScan">
-            <list>
-                <value>com.javamonkeys.dao.user</value>
-                <value>com.javamonkeys.dao.game</value>
-            </list>
-        </property>
         <property name="hibernateProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>

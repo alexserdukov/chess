@@ -1,13 +1,15 @@
 package com.javamonkeys.dao.user;
 
+import com.javamonkeys.dao.useraccessgroup.IUserAccessGroupDao;
 import com.javamonkeys.entity.user.User;
 import com.javamonkeys.entity.useraccessgroup.UserAccessGroup;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.inject.Inject;
 import javax.transaction.Transactional;
 
 import java.util.Date;
@@ -19,590 +21,84 @@ import static org.junit.Assert.*;
 @Transactional
 public class UserDaoTest {
 
-    @Inject
+    @Autowired
     IUserDao userDao;
 
-    //////////////////////////////////////////////////////////////////////////////////////
-    //  USER TESTS
-    //////////////////////////////////////////////////////////////////////////////////////
+    @Autowired
+    IUserAccessGroupDao userAccessGroupDao;
 
-    /** Create user (1 constructor)
-    * User doesn't exist in DB.
-    * User should be created (not null) or expected UserAlreadyExistException exception */
+    private User testUser;
+    private UserAccessGroup testGroup1, testGroup2;
+
+    @Before
+    public void setup() {
+        testGroup1 = userAccessGroupDao.createUserAccessGroup(new UserAccessGroup("test group 1", false));
+        testGroup2 = userAccessGroupDao.createUserAccessGroup(new UserAccessGroup("test group 2", false));
+
+        testUser = userDao.createUser(new User("testUser@javamonkeys.com", "12345", null, "test user name", testGroup1));
+    }
+
+    /* Test method: "createUser()" */
     @Test
-    public void testCreateUser1(){
+    public void createUserTest() {
+        User user = new User("new user", "12345");
+        user.setName("new user name");
+        assertNull(user.getId());
+        user = userDao.createUser(user);
+        assertNotNull(user);
+        assertNotNull(user.getId());
 
-        String email = "banana1@gmail.com";
-        String password = "12345";
-
-        UserAccessGroup userAccessGroup = new UserAccessGroup("admin", true);
-        userAccessGroup.setId(1);
-
-        try {
-            User user = userDao.createUser(email, password, userAccessGroup);
-            assertNotNull("Return value (USER) shouldn't be null!", user);
-
-            User currentUser = userDao.getUserByEmail(email);
-            assertEquals("Incorrect email for new user", email, currentUser.getEmail());
-            assertEquals("Incorrect password for new user", password, currentUser.getPassword());
-            assertEquals("Incorrect user access group for new user", userAccessGroup.getId(), currentUser.getUserAccessGroup().getId());
-            assertEquals("Incorrect user access group for new user", userAccessGroup.getName(), currentUser.getUserAccessGroup().getName());
-
-        } catch (UserAlreadyExistException e) {
-            fail(String.format("User with email %s already exists. Check test data.", email));
-        }
+        User newUser = userDao.getUserById(user.getId());
+        assertNotNull(newUser);
+        assertEquals(user, newUser);
     }
 
-    /** Create user (1 constructor)
-     * User already exists in DB.
-     * Expected UserAlreadyExistException exception */
-    @Test(expected = UserAlreadyExistException.class)
-    public void testCreateUser1Exception() throws UserAlreadyExistException {
-
-        UserAccessGroup userAccessGroup = new UserAccessGroup("admin", true);
-        userAccessGroup.setId(1);
-
-        userDao.createUser("serdyukov@javamonkeys.com", "12345", userAccessGroup);
-    }
-
-    /** Create user (1 constructor)
-     * Null arguments passed
-     * Expected IllegalArgumentException exception */
+    /* Test method: "getUserById()" */
     @Test
-    public void testCreateUser1TestForNullArguments(){
-
-        UserAccessGroup userAccessGroup = new UserAccessGroup("admin", true);
-        userAccessGroup.setId(1);
-
-        // email == null
-        try {
-            userDao.createUser(null, "12345", userAccessGroup);
-        } catch (IllegalArgumentException e){
-            // ok
-        } catch (Throwable e){
-            // other types of exceptions
-            fail("Method should return IllegalArgumentException (argument \"email\" is null)");
-        }
-
-        // password == null
-        try {
-            userDao.createUser("filippov@javamonkeys.com", null, userAccessGroup);
-        } catch (IllegalArgumentException e){
-            // ok
-        } catch (Throwable e){
-            // other types of exceptions
-            fail("Method should return IllegalArgumentException (argument \"password\" is null)");
-        }
-
-        // userAccessGroup == null
-        try {
-            userDao.createUser("filippov@javamonkeys.com", "12345", null);
-        } catch (IllegalArgumentException e){
-            // ok
-        } catch (Throwable e){
-            // other types of exceptions
-            fail("Method should return IllegalArgumentException (argument \"userAccessGroup\" is null)");
-        }
+    public void getUserByIdTest() {
+        User user = userDao.getUserById(testUser.getId());
+        assertNotNull(user);
+        assertEquals(testUser, user);
     }
 
-    /** Create user (2 constructor)
-     * User doesn't exist in DB.
-     * User should be created (not null) or expected UserAlreadyExistException exception */
+    /* Test method: "getUserByEmail()" */
     @Test
-    public void testCreateUser2(){
-
-        String email = "banana2@gmail.com";
-        String password = "12345";
-
-        UserAccessGroup userAccessGroup = new UserAccessGroup("admin", true);
-        userAccessGroup.setId(1);
-
-        try {
-            User user = userDao.createUser(email, password, userAccessGroup, new Date());
-            assertNotNull("Return value (USER) shouldn't be null!", user);
-
-            User currentUser = userDao.getUserByEmail(email);
-            assertEquals("Incorrect email for new user", email, currentUser.getEmail());
-            assertEquals("Incorrect password for new user", password, currentUser.getPassword());
-            assertEquals("Incorrect user access group for new user", userAccessGroup.getId(), currentUser.getUserAccessGroup().getId());
-            assertEquals("Incorrect user access group for new user", userAccessGroup.getName(), currentUser.getUserAccessGroup().getName());
-
-        } catch (UserAlreadyExistException e) {
-            fail(String.format("User with email %s already exists. Check test data.", email));
-        }
+    public void getUserByEmailTest() {
+        User user = userDao.getUserByEmail(testUser.getEmail());
+        assertNotNull(user);
+        assertEquals(testUser, user);
     }
 
-    /** Create user (2 constructor)
-     * User already exists in DB.
-     * Expected UserAlreadyExistException exception */
-    @Test(expected = UserAlreadyExistException.class)
-    public void testCreateUser2Exception() throws UserAlreadyExistException {
-        UserAccessGroup userAccessGroup = new UserAccessGroup("admin", true);
-        userAccessGroup.setId(1);
-        userDao.createUser("serdyukov@javamonkeys.com", "12345", userAccessGroup, new Date());
-    }
-
-    /** Create user (2 constructor)
-     * Null arguments passed
-     * Expected IllegalArgumentException exception */
+    /* Test method: "updateUser()" */
     @Test
-    public void testCreateUser2TestForNullArguments(){
+    public void updateUserTest() {
+        final String newEmail = "new email";
+        final String newPass = "87654";
+        final String newName = "new name";
+        final Date newDate = new Date();
 
-        UserAccessGroup userAccessGroup = new UserAccessGroup("admin", true);
-        userAccessGroup.setId(1);
+        assertNotEquals(newEmail, testUser.getEmail());
+        assertNotEquals(newPass, testUser.getPassword());
+        assertNotEquals(newName, testUser.getName());
+        assertNotEquals(newDate, testUser.getBirthDate());
+        assertNotEquals(testGroup2, testUser.getUserAccessGroup());
+        testUser.setEmail(newEmail);
+        testUser.setPassword(newPass);
+        testUser.setName(newName);
+        testUser.setBirthDate(newDate);
+        testUser.setUserAccessGroup(testGroup2);
 
-        // email == null
-        try {
-            userDao.createUser(null, "12345", userAccessGroup, new Date());
-        } catch (IllegalArgumentException e){
-            // ok
-        } catch (Throwable e){
-            // other types of exceptions
-            fail("Method should return IllegalArgumentException (argument \"email\" is null)");
-        }
-
-        // password == null
-        try {
-            userDao.createUser("filippov@javamonkeys.com", null, userAccessGroup, new Date());
-        } catch (IllegalArgumentException e){
-            // ok
-        } catch (Throwable e) {
-            // other types of exceptions
-            fail("Method should return IllegalArgumentException (argument \"password\" is null)");
-        }
-
-        // userAccessGroup == null
-        try {
-            userDao.createUser("filippov@javamonkeys.com", "12345", null, new Date());
-        } catch (IllegalArgumentException e){
-            // ok
-        } catch (Throwable e){
-            // other types of exceptions
-            fail("Method should return IllegalArgumentException (argument \"userAccessGroup\" is null)");
-        }
-
-        // birthDate == null
-        try {
-            userDao.createUser("filippov@javamonkeys.com", "12345", userAccessGroup, null);
-        } catch (IllegalArgumentException e){
-            // ok
-        } catch (Throwable e){
-            // other types of exceptions
-            fail("Method should return IllegalArgumentException (argument \"birthDate\" is null)");
-        }
+        assertTrue(userDao.updateUser(testUser));
+        User updatedUser = userDao.getUserById(testUser.getId());
+        assertNotNull(updatedUser);
+        assertEquals(testUser, updatedUser);
     }
 
-    /** Get user by id from DB
-     * User already exists in DB.
-     * User should be get (not null) */
+    /* Test method: "deleteUser()" */
     @Test
-    public void testGetUserById(){
-
-        int id = 3;
-        String email = "filippov@javamonkeys.com";
-        String password = "12345";
-
-        User user = userDao.getUserById(id);
-        assertNotNull("Return value (USER) shouldn't be null!", user);
-        assertEquals("Incorrect user", email, user.getEmail());
-        assertEquals("Incorrect user", password, user.getPassword());
-
+    public void deleteUserTest() {
+        assertTrue(userDao.deleteUser(testUser));
+        assertNull(userDao.getUserById(testUser.getId()));
     }
-
-    /** Get user by id
-     * User doesn't exist in DB. */
-    @Test
-    public void testGetUserByIdNullIfNotFound() {
-        User currentUser = userDao.getUserById(-1);
-        assertNull(currentUser);
-    }
-
-    /** Get user by Email from DB
-     * User already exists in DB.
-     * User should be get (not null) */
-    @Test
-    public void testGetUserByEmail(){
-
-        String email = "filippov@javamonkeys.com";
-        String password = "12345";
-
-        User user = userDao.getUserByEmail(email);
-        assertNotNull("Return value (USER) shouldn't be null!",user);
-        assertEquals("Incorrect user", email, user.getEmail());
-        assertEquals("Incorrect user", password, user.getPassword());
-
-    }
-
-    /** Get user by Email
-     * User doesn't exist in DB. */
-    @Test
-    public void testGetUserByEmailNullIfNotFound() {
-        User currentUser = userDao.getUserByEmail("EmptyEmail@javamonkey.com");
-        assertNull(currentUser);
-    }
-
-    /** Get user ny Email
-     * Null arguments passed */
-    @Test
-    public void testGetUserByEmailTestForNullArguments() {
-        User currentUser = userDao.getUserByEmail(null);
-        assertNull(currentUser);
-    }
-
-    /** Get user by token from DB
-     * User already exists in DB.
-     * User should be get (not null) */
-    @Test
-    public void testGetUserByToken(){
-
-        String token = "54947df8-0e9e-4471-a2f9-9af509fb5889";
-        String email = "sirosh@javamonkeys.com";
-
-        User user = userDao.getUserByToken(token);
-        assertNotNull("Return value (USER) shouldn't be null!",user);
-        assertEquals("Incorrect user", email, user.getEmail());
-        assertEquals("Incorrect user", token, user.getToken());
-    }
-
-    /** Get user by token
-     * User doesn't exist in DB. */
-    @Test
-    public void testGetUserByTokenNullIfNotFound() {
-        User currentUser = userDao.getUserByToken("incorrect-token");
-        assertNull(currentUser);
-    }
-
-    /** Get user by token
-     * Null arguments passed */
-    @Test
-    public void testGetUserByTokenTestForNullArguments() {
-        User currentUser = userDao.getUserByToken(null);
-        assertNull(currentUser);
-    }
-
-    /** Delete user from DB
-     * User already exists in DB
-     * User should be delete or expected UserNotFoundException exception*/
-    @Test
-    public void testDeleteUser(){
-
-        String email = "DeleteUser@javamonkeys.com";
-
-        try {
-            User user = userDao.getUserByEmail(email);
-            userDao.deleteUser(user);
-
-            User currentUser = userDao.getUserByEmail(email);
-            assertNull(currentUser);
-        } catch (UserNotFoundException e) {
-            fail(String.format("User with email %s was not found", email));
-        }
-    }
-
-    /** Delete user from DB
-     * User doesn't exist in DB.
-     * Expected UserNotFoundException exception */
-    @Test(expected = UserNotFoundException.class)
-    public void testDeleteUserException() throws UserNotFoundException {
-        userDao.deleteUser(new User("",""));
-    }
-
-    /** Delete user from DB
-     * Null arguments passed
-     * Expected IllegalArgumentException exception */
-    @Test(expected = IllegalArgumentException.class)
-    public void testDeleteUserTestForNullArguments() throws UserNotFoundException {
-        userDao.deleteUser(null);
-    }
-
-    /** Update user data
-     * User already exists in DB
-     * User should be updated or expected UserNotFoundException exception*/
-    @Test
-    public void testUpdateUser(){
-
-        String email = "UpdateUser@javamonkeys.com";
-
-        try {
-            User user = userDao.getUserByEmail(email);
-
-            //String newEmail = "UpdateUser2@javamonkeys.com";
-            String newPassword = "111";
-            Date newBirthDate = new Date();
-            String newToken = "new token";
-            String newName = "John Doe";
-            UserAccessGroup newGroup = userDao.getUserAccessGroupByName("admin");
-
-            //assertNotEquals(newEmail, user.getEmail());
-            assertNotEquals(newPassword, user.getPassword());
-            assertNotEquals(newBirthDate, user.getBirthDate());
-            assertNotEquals(newToken, user.getToken());
-            assertNotEquals(newName, user.getName());
-            assertNotEquals(newGroup.getId(), user.getUserAccessGroup().getId());
-            assertNotEquals(newGroup.getName(), user.getUserAccessGroup().getName());
-
-            //user.setEmail(newEmail);
-            user.setPassword(newPassword);
-            user.setBirthDate(newBirthDate);
-            user.setToken(newToken);
-            user.setName(newName);
-            user.setUserAccessGroup(newGroup);
-
-            userDao.updateUser(user);
-
-            User currentUser = userDao.getUserByEmail(email);
-            assertNotNull(currentUser);
-
-            //assertEquals(newEmail, user.getEmail());
-            assertEquals(newPassword, user.getPassword());
-            assertEquals(newBirthDate, user.getBirthDate());
-            assertEquals(newToken, user.getToken());
-            assertEquals(newName, user.getName());
-            assertEquals(newGroup.getId(), user.getUserAccessGroup().getId());
-            assertEquals(newGroup.getName(), user.getUserAccessGroup().getName());
-
-        } catch (UserNotFoundException e) {
-            fail(String.format("User with email %s was not found", email));
-        }
-    }
-
-    /** Update user
-     * User doesn't exist in DB.
-     * Expected UserNotFoundException exception */
-    @Test(expected = UserNotFoundException.class)
-    public void testUpdateUserException() throws UserNotFoundException {
-        userDao.updateUser(new User("", ""));
-    }
-
-    /** Update user
-     * Null arguments passed
-     * Expected IllegalArgumentException exception */
-    @Test(expected = IllegalArgumentException.class)
-    public void testUpdateUserTestForNullArguments() throws UserNotFoundException {
-        userDao.updateUser(null);
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////
-    //  USER ACCESS GROUPS TESTS
-    //////////////////////////////////////////////////////////////////////////////////////
-
-
-    /** Create user access group
-     * Group doesn't exist in DB.
-     * Group should be created (not null) or expected UserAccessGroupAlreadyExistException exception */
-    @Test
-    public void testCreateUserAccessGroup(){
-
-        String name = "testNameGroup1";
-        boolean isAdmin = true;
-        try {
-            UserAccessGroup userAccessGroup = userDao.createUserAccessGroup(name, isAdmin);
-            assertNotNull("Return value (userAccessGroup) shouldn't be null!", userAccessGroup);
-
-            UserAccessGroup currentGroup = userDao.getUserAccessGroupByName(name);
-            assertEquals("Incorrect name for new user access group", name, currentGroup.getName());
-            assertEquals("Incorrect IsAdmin for new user access group", isAdmin, currentGroup.getIsAdmin());
-
-        } catch (UserAccessGroupAlreadyExistException e) {
-            fail(String.format("User access group with name %s already exists. Check test data.", name));
-        }
-
-        name = "testNameGroup2";
-        isAdmin = false;
-        try {
-            UserAccessGroup userAccessGroup = userDao.createUserAccessGroup(name, isAdmin);
-            assertNotNull("Return value (userAccessGroup) shouldn't be null!", userAccessGroup);
-
-            UserAccessGroup currentGroup = userDao.getUserAccessGroupByName(name);
-            assertEquals("Incorrect name for new user access group", name, currentGroup.getName());
-            assertEquals("Incorrect IsAdmin for new user access group", isAdmin, currentGroup.getIsAdmin());
-
-        } catch (UserAccessGroupAlreadyExistException e) {
-            fail(String.format("User access group with name %s already exists. Check test data.", name));
-        }
-    }
-
-    /** Create user access group
-     * Group already exists in DB.
-     * Expected UserAccessGroupAlreadyExistException exception */
-    @Test(expected = UserAccessGroupAlreadyExistException.class)
-    public void testCreateUserAccessGroupException() throws UserAccessGroupAlreadyExistException {
-        userDao.createUserAccessGroup("admin", true);
-    }
-
-    /** Create user access group
-     * Null arguments passed
-     * Expected IllegalArgumentException exception */
-    @Test(expected = IllegalArgumentException.class)
-    public void testCreateUserAccessGroupTestForNullArguments1() throws UserAccessGroupAlreadyExistException{
-        // name == null; isAdmin == true
-        userDao.createUserAccessGroup(null, true);
-    }
-
-    /** Create user access group
-     * Null arguments passed
-     * Expected IllegalArgumentException exception */
-    @Test(expected = IllegalArgumentException.class)
-    public void testCreateUserAccessGroupTestForNullArguments2() throws UserAccessGroupAlreadyExistException {
-        // name == null; isAdmin == false
-        userDao.createUserAccessGroup(null, false);
-    }
-
-    /** Get user access group from DB
-     * Group already exists in DB.
-     * Group should be create (not null) or expected UserAccessGroupNotFoundException exception */
-    @Test
-    public void testGetUserAccessGroup(){
-
-        String testName = "admin";
-
-        UserAccessGroup userAccessGroup = userDao.getUserAccessGroupByName(testName);
-        assertNotNull("Return value (userAccessGroup) shouldn't be null!", userAccessGroup);
-        assertEquals("Incorrect user access group", testName, userAccessGroup.getName());
-    }
-
-    /** Get user access group
-     * Group doesn't exist in DB. */
-    @Test
-    public void testGetUserAccessGroupNullIfNotFound() {
-        UserAccessGroup currentGroup = userDao.getUserAccessGroupByName("IllegalNameOfGroup");
-        assertNull(currentGroup);
-    }
-
-    /** Get user access group
-     * Null arguments passed */
-    @Test
-    public void testGetUserAccessGroupTestForNullArguments() {
-        UserAccessGroup currentGroup = userDao.getUserAccessGroupByName(null);
-        assertNull(currentGroup);
-    }
-
-    /** Delete user access group from DB
-     * Group already exists in DB
-     * Group should be delete or expected UserAccessGroupNotFoundException exception*/
-    @Test
-    public void testDeleteUserAccessGroup(){
-
-        String testName = "groupForDelete";
-        try {
-            UserAccessGroup group = userDao.getUserAccessGroupByName(testName);
-            userDao.deleteUserAccessGroup(group);
-
-            UserAccessGroup currentGroup = userDao.getUserAccessGroupByName(testName);
-            assertNull(currentGroup);
-        } catch (UserAccessGroupNotFoundException e) {
-            fail(String.format("User access group with name %s was not found", testName));
-        }
-    }
-
-    /** Delete user access group from DB
-     * Group doesn't exist in DB.
-     * Expected UserAccessGroupNotFoundException exception */
-    @Test(expected = UserAccessGroupNotFoundException.class)
-    public void testDeleteUserAccessGroupException() throws UserAccessGroupNotFoundException {
-        userDao.deleteUserAccessGroup(new UserAccessGroup("IllegalNameOfGroup", false));
-    }
-
-    /** Delete user access group from DB
-     * Null arguments passed
-     * Expected UserAccessGroupNotFoundException exception */
-    @Test(expected = UserAccessGroupNotFoundException.class)
-    public void testDeleteUserAccessGroupTestForNullArguments() throws UserAccessGroupNotFoundException {
-        userDao.deleteUserAccessGroup(null);
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////
-    //  REGISTER / LOGIN / LOGOUT TESTS
-    //////////////////////////////////////////////////////////////////////////////////////
-
-    /** Login operation
-     * User already exists in DB.
-     * Token should be created (not null) */
-    @Test
-    public void testLogin() {
-
-        String email = "serdyukov@javamonkeys.com";
-        String password = "12345";
-
-        try {
-
-            User currentUserByEmail = userDao.getUserByEmail(email);
-            if(currentUserByEmail==null)
-                fail("User with email: " + email + " was not found. Check test data.");
-
-            String oldToken = currentUserByEmail.getToken();
-
-            User currentUser = userDao.login(email, password);
-            assertNotNull(currentUser);
-
-            assertEquals(email, currentUser.getEmail());
-
-            String newToken = currentUser.getToken();
-
-            assertNotNull(newToken);
-            assertNotEquals(oldToken, newToken);
-
-            User currentUserByToken = userDao.getUserByToken(newToken);
-            assertEquals(newToken, currentUserByToken.getToken());
-
-        } catch (IncorrectUserCredentialsException e) {
-            fail("User with email " + email + " and password " + password + " was not found");
-        }
-
-    }
-
-    /** Login operation (incorrect email)
-     * User doesn't exist in DB.
-     * Expected IncorrectUserCredentials exception */
-    @Test(expected = IncorrectUserCredentialsException.class)
-    public void testLoginExceptionIncorrectEmail() throws IncorrectUserCredentialsException {
-        userDao.login("empty-incorrect-email", "12345");
-    }
-
-    /** Login operation (incorrect password)
-     * User already exists in DB, password - incorrect.
-     * Expected IncorrectUserCredentials exception */
-    @Test(expected = IncorrectUserCredentialsException.class)
-    public void testLoginExceptionIncorrectPassword() throws IncorrectUserCredentialsException {
-        userDao.login("serdyukov@javamonkeys.com", "incorrect password");
-    }
-
-    /** Login operation (null email)
-     * User doesn't exist in DB.
-     * Expected IncorrectUserCredentials exception */
-    @Test(expected = IncorrectUserCredentialsException.class)
-    public void testLoginTestForNullEmail() throws IncorrectUserCredentialsException {
-        userDao.login(null, "12345");
-    }
-
-    /** Login operation (null password)
-     * User already exists in DB.
-     * Expected IncorrectUserCredentials exception */
-    @Test(expected = IncorrectUserCredentialsException.class)
-    public void testLoginTestForNullPassword() throws IncorrectUserCredentialsException {
-        userDao.login("serdyukov@javamonkeys.com", null);
-    }
-
-    /** Logout operation
-     * User already exists in DB.
-     * Token should be deleted from user data*/
-    @Test
-    public void testLogout() {
-
-        String email = "serdyukov@javamonkeys.com";
-
-        User currentUser = userDao.getUserByEmail(email);
-        if (currentUser == null)
-            fail("User with email " + email + " was not found. Check test data");
-
-        String currentToken = currentUser.getToken();
-        assertNotNull("Current token should be not null. Check test data", currentToken);
-
-        userDao.logout(currentUser);
-
-        currentUser = userDao.getUserByEmail(email);
-        assertNull(currentUser.getToken());
-    }
-
 }
 
