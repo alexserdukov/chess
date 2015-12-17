@@ -1,4 +1,4 @@
-package com.javamonkeys.tests;
+package com.javamonkeys.controller;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.ClientHttpResponse;

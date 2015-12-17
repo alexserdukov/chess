@@ -1,4 +1,4 @@
-package com.javamonkeys.tests;
+package com.javamonkeys.controller;
 
 import com.javamonkeys.entity.useraccessgroup.UserAccessGroup;
 import org.junit.AfterClass;

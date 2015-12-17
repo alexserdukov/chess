@@ -1,4 +1,4 @@
-package com.javamonkeys.tests;
+package com.javamonkeys.controller;
 
 import com.javamonkeys.api.GameService;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -24,14 +24,14 @@ public class GameServiceTest {
     public void createGame() throws FileNotFoundException {
 
         RestTemplate restTemplate = new RestTemplate();
-        List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
         messageConverters.add(new MappingJackson2HttpMessageConverter());
         restTemplate.setMessageConverters(messageConverters);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         HttpEntity<GameService.CreateGameRequest> entity =
-                new HttpEntity<GameService.CreateGameRequest>(getGame("create_game.json"),headers);
+                new HttpEntity<>(getGame("create_game.json"),headers);
         ResponseEntity<GameService.CreateGameResponse> response = restTemplate.
                 exchange(baseUrl + "/game/new-game", HttpMethod.POST, entity, GameService.CreateGameResponse.class);
 
@@ -42,8 +42,7 @@ public class GameServiceTest {
 
         InputStream stream = this.getClass().getClassLoader().getResourceAsStream("game/" + fileName);
         try {
-            GameService.CreateGameRequest request =  mapper.readValue(stream, GameService.CreateGameRequest.class);
-            return request;
+            return mapper.readValue(stream, GameService.CreateGameRequest.class);
         } catch (IOException e) {
             Assert.fail();
         }
