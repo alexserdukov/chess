@@ -24,85 +24,92 @@ public class MVCController {
 
     @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
     public ModelAndView index() {
-
         ModelAndView model = new ModelAndView();
         model.setViewName("index");
-
         return model;
     }
 
     @RequestMapping(value = "/game", method = RequestMethod.GET)
     public ModelAndView game() {
-
         ModelAndView model = new ModelAndView();
         model.setViewName("game");
-
         return model;
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public ModelAndView login(@RequestParam(value = "error", required = false) String error,
                               @RequestParam(value = "logout", required = false) String logout) {
-
         ModelAndView model = new ModelAndView();
         if (error != null) {
             model.addObject("error", "Invalid username or password!");
         }
-
         if (logout != null) {
             model.addObject("msg", "You've been logged out successfully.");
         }
         model.setViewName("login");
-
         return model;
-
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public ModelAndView registration() {
-
         ModelAndView model = new ModelAndView();
         model.setViewName("registration");
-
         return model;
-
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
     public ModelAndView register(@RequestHeader(value="Authorization") String authorization) {
-
         ModelAndView model = new ModelAndView();
-
-
         ResponseEntity responseEntity = userService.createUser(authorization);
         if (responseEntity.getStatusCode() == HttpStatus.CREATED) {
             model.addObject("msg", "You have been successfully registered! Please, login!");
             model.setViewName("login");
         } else {
-
             model.addObject("error", "Incorrect user credentials or user with this email already exists!");
             model.setViewName("registration");
         }
-
         return model;
     }
 
-    @RequestMapping(value = "/userprofile", method = RequestMethod.GET)
-    public ModelAndView userprofile() {
-
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public ModelAndView profile() {
         ModelAndView model = new ModelAndView();
-        model.setViewName("userprofile");
-
+        model.setViewName("profile");
         return model;
+    }
 
+    @RequestMapping(value = "/mygames", method = RequestMethod.GET)
+    public ModelAndView mygames() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("mygames");
+        return model;
+    }
+
+    @RequestMapping(value = "/boards", method = RequestMethod.GET)
+    public ModelAndView boards() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("boards");
+        return model;
+    }
+
+    @RequestMapping(value = "/statistics", method = RequestMethod.GET)
+    public ModelAndView statistics() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("statistics");
+        return model;
+    }
+
+    @RequestMapping(value = "/about", method = RequestMethod.GET)
+    public ModelAndView about() {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("about");
+        return model;
     }
 
     //for 403 access denied page
     @RequestMapping(value = "/403", method = RequestMethod.GET)
     public ModelAndView accessDenied() {
-
         ModelAndView model = new ModelAndView();
-
         //check if user is login
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (!(auth instanceof AnonymousAuthenticationToken)) {
@@ -110,10 +117,8 @@ public class MVCController {
             System.out.println(userDetail);
             model.addObject("username", userDetail.getUsername());
         }
-
         model.setViewName("403");
         return model;
-
     }
 
 }

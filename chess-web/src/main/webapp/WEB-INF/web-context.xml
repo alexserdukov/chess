@@ -33,13 +33,13 @@
     <!--<mvc:resources mapping="/gametest/**" location="/gametest/" />-->
     <mvc:resources mapping="/test/**" location="/test/" />
 
-    <!-- for usage *.html views -->
-    <bean class="org.springframework.web.servlet.view.XmlViewResolver">
-        <property name="location">
-            <value>/WEB-INF/spring-views.xml</value>
-        </property>
-        <property name="order" value="0"/>
-    </bean>
+    <!--&lt;!&ndash; for usage *.html views &ndash;&gt;-->
+    <!--<bean class="org.springframework.web.servlet.view.XmlViewResolver">-->
+        <!--<property name="location">-->
+            <!--<value>/WEB-INF/spring-views.xml</value>-->
+        <!--</property>-->
+        <!--<property name="order" value="0"/>-->
+    <!--</bean>-->
 
     <!-- for other views -->
     <bean
