@@ -9,6 +9,9 @@
     <link href="css/sticky-footer-navbar.css" rel="stylesheet">
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
+    <script src="js/chess/authentication.js"></script>
+    <script src="js/chess/profile.js"></script>
+    <script src="js/chess/restprotocol.js"></script>
 </head>
 
 <nav class="navbar navbar-default">
@@ -19,18 +22,16 @@
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li><a href="/index">Game</a></li>
-                <li><a href="/mygames">My games</a></li>
-                <li><a href="/boards">Boards</a></li>
                 <li><a href="/statistics">Statistics</a></li>
                 <li><a href="/about">About</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
-                    <a class="dropdown-toggle" data-toggle="dropdown" role="button">Alexander Filippov<span class="caret"></span></a>
+                    <a class="dropdown-toggle" data-toggle="dropdown" role="button">${userName}<span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="/profile">profile</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="/logout">logout</a></li>
+                        <li><a id="btn-logout">logout</a></li>
                     </ul>
                 </li>
             </ul>
@@ -69,9 +70,14 @@
     </div>
 </div>
 
+<%-- FOOTER --%>
 <footer class="footer">
-    <div class="container">
-        <p class="text-muted">Javamonkeys.com (2015)</p>
+    <div class="container-fluid">
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a role="button">javamonkeys.com</a>
+            </li>
+        </ul>
     </div>
 </footer>
 

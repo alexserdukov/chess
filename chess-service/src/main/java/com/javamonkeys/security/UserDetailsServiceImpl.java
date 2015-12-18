@@ -20,13 +20,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
         User user = userDao.getUserByEmail(email);
-
         if (user != null) {
-
             Set<GrantedAuthority> roles = new HashSet();
-
             if (user.getUserAccessGroup()!=null && user.getUserAccessGroup().getIsAdmin() == true){
                 roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
                 roles.add(new SimpleGrantedAuthority("ROLE_USER"));
@@ -38,9 +34,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                     new org.springframework.security.core.userdetails.User(user.getEmail(),
                             user.getPassword(),
                             roles);
-
             return userDetails;
-
         } else {
             throw new UsernameNotFoundException("No user with email '" + email + "' found!");
         }
