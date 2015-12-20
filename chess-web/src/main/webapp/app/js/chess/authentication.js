@@ -36,7 +36,7 @@ function registration() {
     }
 
     panelInfo.hide();
-    restAddNewUser(email.val(), password.val(),
+    restCreateNewUser(email.val(), password.val(),
         function done(user) {
             user.name = username.val();
             restUpdateUser(user.id, user)

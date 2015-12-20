@@ -11,8 +11,9 @@
     <script src="js/chessboard.js"></script>
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    <script src="js/chess/game.js"></script>
     <script src="js/chess/authentication.js"></script>
+    <script src="js/chess/game.js"></script>
+    <script src="js/chess/restprotocol.js"></script>
 </head>
 
 <%-- MAIN MENU--%>

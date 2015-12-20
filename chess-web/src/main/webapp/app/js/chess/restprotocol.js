@@ -1,8 +1,11 @@
-var restUserPath = "http://localhost:8555/api/users";
+var basicUrl = "http://localhost:8555";
+var restUserPath = basicUrl + "/api/users";
+var restGamePath = basicUrl + "/api/games";
+var restTurnPath = basicUrl + "/api/turns";
 
 // USERS
 
-function restAddNewUser(email, password, cbDone, cbFail) {
+function restCreateNewUser(email, password, cbDone, cbFail) {
     $.ajax({
         url: restUserPath,
         type: "POST",
@@ -44,3 +47,17 @@ function restUpdateUser(id, user, cbDone, cbFail) {
 }
 
 // GAMES
+
+function restCreateNewGame(userId, isWhite, gameLength, cbDone, cbFail) {
+    $.ajax({
+        url: restGamePath,
+        type: "POST",
+        headers: {
+            "userId": userId,
+            "isWhite": isWhite,
+            "gameLength": gameLength
+        }
+    })
+        .done(cbDone)
+        .fail(cbFail);
+}

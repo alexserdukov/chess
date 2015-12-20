@@ -8,8 +8,8 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <mapping class="com.javamonkeys.entity.user.User"/>
         <mapping class="com.javamonkeys.entity.useraccessgroup.UserAccessGroup"/>
-        <mapping class="com.javamonkeys.dao.game.Game"/>
-        <mapping class="com.javamonkeys.dao.game.Turn"/>
+        <mapping class="com.javamonkeys.entity.game.Game"/>
+        <mapping class="com.javamonkeys.entity.turn.Turn"/>
     </session-factory>
 
 </hibernate-configuration>

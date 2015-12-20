@@ -1,7 +1,6 @@
-package com.javamonkeys.dao.game;
+package com.javamonkeys.entity.turn;
 
 public enum Pieces {
-
     KING ("K"),
     QUEEN("Q"),
     ROOK("R"),

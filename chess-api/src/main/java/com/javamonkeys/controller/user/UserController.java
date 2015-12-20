@@ -20,7 +20,7 @@ public class UserController implements IUserController {
     IUserService userService;
 
     @Override
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<User> createUser(@RequestHeader(value = "Authorization") String authorization) {
         String[] credentials = getCredentialsFromBase64String(authorization);
         if (credentials != null) {

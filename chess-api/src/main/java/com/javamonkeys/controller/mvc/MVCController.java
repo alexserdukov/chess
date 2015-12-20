@@ -1,4 +1,4 @@
-package com.javamonkeys.controller;
+package com.javamonkeys.controller.mvc;
 
 import com.javamonkeys.controller.user.IUserController;
 import com.javamonkeys.entity.user.User;

@@ -1,25 +1,27 @@
-package com.javamonkeys.dao.game;
+package com.javamonkeys.entity.turn;
 
+import com.javamonkeys.entity.game.Game;
 import com.javamonkeys.entity.user.User;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "Turns")
-public class Turn {
+public class Turn implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "game_id")
+    @ManyToOne
+    @JoinColumn(name = "gameId")
     private Game game;
 
-    @ManyToOne(cascade = {CascadeType.ALL})
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "userId")
     private User user;
 
     @Column(name = "turnDate")
@@ -38,9 +40,7 @@ public class Turn {
     @Column(name = "fen")
     private String fen;
 
-    public Turn() {
-
-    }
+    public Turn() {}
 
     public Turn(Game game, User user, Date turnDate, Pieces piece, String startPosition, String endPosition, String fen) {
         this.game = game;
@@ -52,11 +52,11 @@ public class Turn {
         this.fen = fen;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -76,12 +76,10 @@ public class Turn {
         this.user = user;
     }
 
-    @Enumerated(EnumType.STRING)
     public Date getTurnDate() {
         return turnDate;
     }
 
-    @Enumerated(EnumType.STRING)
     public void setTurnDate(Date turnDate) {
         this.turnDate = turnDate;
     }
@@ -116,5 +114,37 @@ public class Turn {
 
     public void setFen(String fen) {
         this.fen = fen;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Turn turn = (Turn) o;
+
+        if (id != null ? !id.equals(turn.id) : turn.id != null) return false;
+        if (game != null ? !game.equals(turn.game) : turn.game != null) return false;
+        if (user != null ? !user.equals(turn.user) : turn.user != null) return false;
+        if (turnDate != null ? !turnDate.equals(turn.turnDate) : turn.turnDate != null) return false;
+        if (piece != turn.piece) return false;
+        if (startPosition != null ? !startPosition.equals(turn.startPosition) : turn.startPosition != null)
+            return false;
+        if (endPosition != null ? !endPosition.equals(turn.endPosition) : turn.endPosition != null) return false;
+        return !(fen != null ? !fen.equals(turn.fen) : turn.fen != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (game != null ? game.hashCode() : 0);
+        result = 31 * result + (user != null ? user.hashCode() : 0);
+        result = 31 * result + (turnDate != null ? turnDate.hashCode() : 0);
+        result = 31 * result + (piece != null ? piece.hashCode() : 0);
+        result = 31 * result + (startPosition != null ? startPosition.hashCode() : 0);
+        result = 31 * result + (endPosition != null ? endPosition.hashCode() : 0);
+        result = 31 * result + (fen != null ? fen.hashCode() : 0);
+        return result;
     }
 }

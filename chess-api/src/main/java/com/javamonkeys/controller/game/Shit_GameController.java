@@ -1,11 +1,16 @@
-package com.javamonkeys.api;
+package com.javamonkeys.controller.game;
 
 import com.javamonkeys.dao.game.*;
+import com.javamonkeys.dao.turn.TurnDao;
 import com.javamonkeys.dao.user.*;
 
+import com.javamonkeys.entity.game.Game;
+import com.javamonkeys.entity.game.GameStatus;
+import com.javamonkeys.entity.turn.Turn;
 import com.javamonkeys.entity.user.User;
 import org.hibernate.SessionFactory;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,25 +19,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
-//import com.fasterxml.jackson.annotation.*;
+public class Shit_GameController implements Shit_IGameController {
 
-import javax.inject.Inject;
-
-
-@RestController
-@RequestMapping("/api/game")
-public class GameService implements IGameService {
-
-    @Inject
+    @Autowired
     private GameDao gameDao;
 
-    @Inject
+    @Autowired
     private UserDao userDao;
 
-    @Inject
+    @Autowired
     private TurnDao turnDao;
 
-    @Inject
+    @Autowired
     private SessionFactory hibernateSessionFactory;
 
     //    @Inject
@@ -62,9 +60,9 @@ public class GameService implements IGameService {
     public ResponseEntity<CreateGameResponse> createGame(@RequestBody CreateGameRequest createGameRequest) {
         String userId = RequestInfo.userId;
         User user = userDao.getUserById(Integer.parseInt(userId));
-        Game g = gameDao.createGame(user, createGameRequest.isWhite, createGameRequest.gameLength);
+//        Game g = gameDao.createGame(user, createGameRequest.isWhite, createGameRequest.gameLength);
 
-        CreateGameResponse resp = new CreateGameResponse(g.getId(), createGameRequest.isWhite);
+        CreateGameResponse resp = new CreateGameResponse(1 /*g.getId()*/, createGameRequest.isWhite);
         return createRespEntity(resp, "");
     }
 
@@ -84,7 +82,7 @@ public class GameService implements IGameService {
     @Transactional
     @RequestMapping(value = "/connect/{gameId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<CreateGameResponse> connectToGame(@PathVariable("gameId") int gameId) {
-        Game g = gameDao.getGame(gameId);
+        Game g = gameDao.getGameById(gameId);
 
         String userId = RequestInfo.userId2;
         User user = userDao.getUserById(Integer.parseInt(userId));
@@ -97,11 +95,11 @@ public class GameService implements IGameService {
             g.setWhite(user);
         };
 
-        try {
+//        try {
             gameDao.updateGame(g);
-        } catch (GameNotFoundException e) {
-            e.printStackTrace();
-        }
+//        } catch (GameNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
         CreateGameResponse resp = new CreateGameResponse(g.getId(), isWhite);
         return createRespEntity(resp, "");
@@ -110,7 +108,7 @@ public class GameService implements IGameService {
     @Transactional
     @RequestMapping(value = "/{gameId}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<GetGameResponse> getGame(@PathVariable(value = "gameId") int gameId) {
-        Game g = gameDao.getGame(gameId);
+        Game g = gameDao.getGameById(gameId);
         Turn lt = turnDao.getLastTurn(g);
         String fen = null;
         if (lt != null){
@@ -152,25 +150,25 @@ public class GameService implements IGameService {
     @Transactional
     @RequestMapping(value = "/turn", method = RequestMethod.POST)
     public ResponseEntity<Boolean> saveTurn(@RequestBody TurnRequest turnRequest) {
-        Game game = gameDao.getGame(turnRequest.gameId);
+        Game game = gameDao.getGameById(turnRequest.gameId);
         User user = null;
         if (turnRequest.userId != null) {
             user = userDao.getUserById(Integer.parseInt(turnRequest.userId));
         }
 
-        Turn turn = new Turn(game, user, new Date(), null, turnRequest.startPosition, turnRequest.endPosition, turnRequest.fen);
+//        Turn turn = new Turn(game, user, new Date(), null, turnRequest.startPosition, turnRequest.endPosition, turnRequest.fen, turnRequest.isGameOver());
 
-        turnDao.saveTurn(turn);
+//        turnDao.saveTurn(turn);
 
         if (turnRequest.isGameOver()){
             game.setStatus(GameStatus.FINISHED);
         }
 
-        try {
+//        try {
             gameDao.updateGame(game);
-        } catch (GameNotFoundException e) {
-            e.printStackTrace();
-        }
+//        } catch (GameNotFoundException e) {
+//            e.printStackTrace();
+//        }
 
         return createRespEntity(true, "");
     }
@@ -178,13 +176,13 @@ public class GameService implements IGameService {
     @Transactional
     @RequestMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
     public ResponseEntity<Boolean> deleteGame(@PathVariable(value = "id") Integer id) {
-        try {
-            gameDao.deleteGame(id);
-        } catch (GameNotFoundException e) {
-            return createRespEntity(null, e.getMessage());
-        } catch (Exception e) {
-            return createRespEntity(null, e.getMessage());
-        }
+//        try {
+////            gameDao.deleteGame(id);
+////        } catch (GameNotFoundException e) {
+////            return createRespEntity(null, e.getMessage());
+//        } catch (Exception e) {
+//            return createRespEntity(null, e.getMessage());
+//        }
         return createRespEntity(true, "");
     }
 
