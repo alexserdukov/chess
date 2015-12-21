@@ -31,12 +31,12 @@ public class TurnController implements ITurnController {
 
     @Override
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
-    public ResponseEntity<Turn> createTurn(Integer gameId,
-                                           Integer userId,
-                                           String startPosition,
-                                           String endPosition,
-                                           String fen,
-                                           Boolean isGameOver) {
+    public ResponseEntity<Turn> createTurn(@RequestHeader(value = "gameId") Integer gameId,
+                                           @RequestHeader(value = "userId") Integer userId,
+                                           @RequestHeader(value = "startPosition") String startPosition,
+                                           @RequestHeader(value = "endPosition") String endPosition,
+                                           @RequestHeader(value = "fen") String fen,
+                                           @RequestHeader(value = "isGameOver") Boolean isGameOver) {
 
         Game game = gameService.getGameById(gameId);
         User user = userService.getUserById(userId);

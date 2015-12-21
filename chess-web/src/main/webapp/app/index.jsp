@@ -79,10 +79,7 @@
                 <tr>
                     <td>
                         <div class="container-fluid">
-                            <div id="board" style="width: 300px"></div>
-                            <%--<p>Game: <span id="gameId"></span>. Status: <span id="status"></span></p>--%>
-                            <%--<p>FEN: <span id="fen"></span></p>--%>
-                            <%--<p>PGN: <span id="pgn"></span></p>--%>
+                            <div id="board" style="width: 600px"></div>
                         </div>
                     </td>
                     <td>

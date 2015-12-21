@@ -1,11 +1,11 @@
 package com.javamonkeys.service.turn;
 
-import com.javamonkeys.dao.game.IGameDao;
 import com.javamonkeys.dao.turn.ITurnDao;
 import com.javamonkeys.entity.game.Game;
 import com.javamonkeys.entity.game.GameStatus;
 import com.javamonkeys.entity.turn.Turn;
 import com.javamonkeys.entity.user.User;
+import com.javamonkeys.service.game.IGameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +20,7 @@ public class TurnService implements ITurnService {
     ITurnDao turnDao;
 
     @Autowired
-    IGameDao gameDao;
+    IGameService gameService;
 
     @Override
     @Transactional
@@ -38,7 +38,7 @@ public class TurnService implements ITurnService {
 
         if (turn != null) {
             game.setStatus(GameStatus.FINISHED);
-            gameDao.updateGame(game);
+            gameService.updateGame(game.getId(), game);
         }
 
         return turn;

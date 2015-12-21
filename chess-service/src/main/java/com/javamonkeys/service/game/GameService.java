@@ -62,7 +62,7 @@ public class GameService implements IGameService {
         existGame.setMoveText(game.getMoveText());
         existGame.setStatus(game.getStatus());
 
-        return gameDao.updateGame(game);
+        return gameDao.updateGame(existGame);
     }
 
     @Override

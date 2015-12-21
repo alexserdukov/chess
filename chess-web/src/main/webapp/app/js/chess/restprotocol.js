@@ -26,15 +26,6 @@ function restGetUserById(id, cbDone, cbFail) {
         .fail(cbFail);
 }
 
-function restGetUserByEmail(email, cbDone, cbFail) {
-    $.ajax({
-        url: restUserPath + "?email=" + encodeURIComponent(email),
-        type: "GET"
-    })
-        .done(cbDone)
-        .fail(cbFail);
-}
-
 function restUpdateUser(id, user, cbDone, cbFail) {
     $.ajax({
         url: restUserPath + "/" + id,
@@ -57,6 +48,54 @@ function restCreateNewGame(userId, isWhite, gameLength, cbDone, cbFail) {
             "isWhite": isWhite,
             "gameLength": gameLength
         }
+    })
+        .done(cbDone)
+        .fail(cbFail);
+}
+
+function restGetGameById(id, cbDone, cbFail) {
+    $.ajax({
+        url: restGamePath + "/" + id,
+        type: "GET"
+    })
+        .done(cbDone)
+        .fail(cbFail);
+}
+
+function restUpdateGame(id, game, cbDone, cbFail) {
+    $.ajax({
+        url: restGamePath + "/" + id,
+        type: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(game)
+    })
+        .done(cbDone)
+        .fail(cbFail);
+}
+
+// TURNS
+
+function restCreateNewTurn(gameId, userId, startPosition, endPosition, fen, isGameOver, cbDone, cbFail) {
+    $.ajax({
+        url: restTurnPath,
+        type: "POST",
+        headers: {
+            "gameId" : gameId,
+            "userId": userId,
+            "startPosition": startPosition,
+            "endPosition": endPosition,
+            "fen": fen,
+            "isGameOver" : isGameOver
+        }
+    })
+        .done(cbDone)
+        .fail(cbFail);
+}
+
+function restGetLastTurn(gameId, cbDone, cbFail) {
+    $.ajax({
+        url: restTurnPath + "?gameId=" + gameId + "&lastTurn=true",
+        type: "GET"
     })
         .done(cbDone)
         .fail(cbFail);

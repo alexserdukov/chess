@@ -1,4 +1,3 @@
-var basicGameUrl = ""; // TODO
 var userId, gameId, board, game, orientation;
 
 $(document).ready(function () {
@@ -13,177 +12,108 @@ $(document).ready(function () {
     });
 
     $("#join-game").click(function () {
-        connectToGameFunc($("#join-game-id").val());
+        connectToGame();
     });
 
-    setInterval(getGame_trigger, 2000);
+    setInterval(getGame, 2000);
 });
 
-function getGame_trigger() {
-    // TODO
-    getGameFunc(gameId);
-}
-
-var createNewGame = function (isWhite) {
-
+function createNewGame(isWhite) {
     orientation = isWhite ? "white" : "black";
-
     restCreateNewGame(userId, isWhite, 3600,
         function done(data) {
             gameId = data.id;
-            if (console && console.log) {
-                console.log("Game created successfully. Sample of data:", data);
-            }
-            init();
+            log("Game created successfully. Sample of data:", data);
+            initBoard();
+            log("Board successfully initialized!");
             $("#game-info").show();
         },
         function fail(jqXHR, textStatus, errorThrown) {
-            if (console && console.log) {
-                console.log("Create new game error! status: ", textStatus + ", error: " + errorThrown);
-            }
+            log("Create new game error! status: ", textStatus + ", error: " + errorThrown);
         });
-};
+}
 
-var connectToGameFunc = function (curGameId) {
-    // TODO
-    var request = $.ajax({
-        url: basicGameUrl + "/connect/" + curGameId,
-        method: "POST",
-        data: JSON.stringify({}),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        cache: false
-    }).done(function (data) {
-        gameId = data.gameId;
-        orientation = orientation = data.isWhite ? "white" : "black";
-        if (console && console.log) {
-            console.log("Sample of data:", data);
+function connectToGame() {
+    restGetUserById(userId,
+        function done(user) {
+            restGetGameById($("#join-game-id").val(),
+                function done(game) {
+                    setOpponent(game, user);
+                },
+                function fail(jqXHR, textStatus, errorThrown) {
+                    log("Get game error! status: ", textStatus + ", error: " + errorThrown);
+                }
+            )
+        },
+        function fail(jqXHR, textStatus, errorThrown) {
+            log("Get user by id \"" + userId + "\" error! status: ", textStatus + ", error: " + errorThrown);
+        });
+
+    var setOpponent = function (game, user) {
+        if (game.white == null) {
+            game.white = user;
+            orientation = "white";
+            updateGameData(game);
+        } else if (game.black == null) {
+            game.black = user;
+            orientation = "black";
+            updateGameData(game);
+        } else if (game.white.id == userId) {
+            orientation = "white";
+            gameId = game.id;
+            initBoard();
+        } else if (game.black.id == userId) {
+            orientation = "black";
+            gameId = game.id;
+            initBoard();
+        } else {
+            // game isn't available for connection
         }
-        init();
+    };
 
-    });
-};
+    var updateGameData = function (game) {
+        restUpdateGame(game.id, game,
+            function done() {
+                gameId = game.id;
+                log("Game successfully updated!");
+                initBoard();
+            },
+            function fail(jqXHR, textStatus, errorThrown) {
+                log("Game update error! status: ", textStatus + ", error: " + errorThrown);
+            });
+    };
+}
 
-var getGameFunc = function (curGameId) {
-    // TODO
-    if (curGameId == null) {
+function getGame() {
+    if (gameId == null) {
         return;
     }
-
-    var request = $.ajax({
-        url: basicGameUrl + "/" + curGameId,
-        method: "GET",
-        data: JSON.stringify({}),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        cache: false
-    }).done(function (data) {
-        game.load(data.fen);
-        board.position(game.fen());
-        //gameId = data.gameId;
-        if (console && console.log) {
-            console.log("Sample of data:", data);
-        }
-        updateStatus();
-
-    });
-};
-
-
-///////////////////////////////// BOARD /////////////////////////////////
-var init = function () {
-    // TODO
-
-//--- start example JS ---
-    game = new Chess();
-
-
-    var turnFunc = function (from, to) {
-        // TODO
-        var dataVal = {
-            gameId: gameId,
-            userId: userId,
-            startPosition: from,
-            endPosition: to,
-            fen: game.fen(),
-            gameOver: game.game_over()
-        };
-        var request = $.ajax({
-            url: basicGameUrl + "/turn",
-            method: "POST",
-            data: JSON.stringify(dataVal),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            cache: false
-        }).done(function (data) {
-            if (console && console.log) {
-                console.log("Sample of data:", data);
-            }
+    restGetLastTurn(gameId,
+        function done(data) {
+            var lastTurn = data[0];
+            game.load(lastTurn.fen);
+            board.position(game.fen());
+            log("Get game by id: DONE!. Sample of data:", data);
+            updateGameInfo();
+        },
+        function fail(jqXHR, textStatus, errorThrown) {
+            log("Get last turn by game id: \"" + gameId + "\" error! status: ", textStatus + ", error: " + errorThrown);
         });
-    };
+}
 
-    var onDragStart = function (source, piece, position, orientation) {
-        // TODO
-        // do not pick up pieces if the game is over
-        // only pick up pieces for the side to move
-        if (game.game_over() === true ||
-            (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
-            (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
-            return false;
-        }
-
-        // only allow pieces to be dragged when the board is oriented
-        // in their direction
-        if ((orientation === 'white' && piece.search(/^w/) === -1) ||
-            (orientation === 'black' && piece.search(/^b/) === -1)) {
-            return false;
-        }
-    };
-
-    var onDrop = function (source, target) {
-        // TODO
-        // see if the move is legal
-        var move = game.move({
-            from: source,
-            to: target,
-            promotion: 'q' // NOTE: always promote to a queen for example simplicity
+function createNewTurn(from, to) {
+    restCreateNewTurn(gameId, userId, from, to, game.fen(), game.game_over(),
+        function done(data) {
+            log("Turn created. Sample of data:", data);
+        },
+        function fail(jqXHR, textStatus, errorThrown) {
+            log("Turn create error! status: ", textStatus + ", error: " + errorThrown);
         });
+}
 
-        // illegal move
-        if (move === null) return 'snapback';
-
-        turnFunc(source, target);
-
-        updateStatus();
-    };
-
-// update the board position after the piece snap
-// for castling, en passant, pawn promotion
-    var onSnapEnd = function () {
-        // TODO
-        board.position(game.fen());
-    };
-
-    var cfg = {
-        pieceTheme: 'img/chesspieces/alpha/{piece}.png',
-        draggable: true,
-        position: 'start',
-        onDragStart: onDragStart,
-        onDrop: onDrop,
-        onSnapEnd: onSnapEnd
-        , orientation: orientation
-    };
-    board = new ChessBoard('board', cfg);
-
-    updateStatus();
-};
-
-var updateStatus = function () {
-    // TODO
+function updateGameInfo() {
     var status = '';
-    var statusEl = $('#game-status'),
-        fenEl = $('#fen'),
-        pgnEl = $('#pgn');
+    var statusEl = $('#game-status');
 
     var moveColor = 'White';
     if (game.turn() === 'b') {
@@ -211,7 +141,67 @@ var updateStatus = function () {
     }
 
     statusEl.html(status);
-    //fenEl.html(game.fen());
-    //pgnEl.html(game.pgn());
     $('#game-id').html(gameId);
+}
+
+var initBoard = function () {
+
+    var onDragStart = function (source, piece, position, orientation) {
+        // do not pick up pieces if the game is over
+        // only pick up pieces for the side to move
+        if (game.game_over() === true ||
+            (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
+            (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
+            return false;
+        }
+
+        // only allow pieces to be dragged when the board is oriented
+        // in their direction
+        if ((orientation === 'white' && piece.search(/^w/) === -1) ||
+            (orientation === 'black' && piece.search(/^b/) === -1)) {
+            return false;
+        }
+    };
+
+    var onDrop = function (source, target) {
+        // see if the move is legal
+        var move = game.move({
+            from: source,
+            to: target,
+            promotion: 'q' // NOTE: always promote to a queen for example simplicity
+        });
+
+        // illegal move
+        if (move === null) return 'snapback';
+
+        createNewTurn(source, target);
+
+        updateGameInfo();
+    };
+
+    var onSnapEnd = function () {
+        // update the board position after the piece snap
+        // for castling, en passant, pawn promotion
+        board.position(game.fen());
+    };
+
+    var cfg = {
+        draggable: true,
+        position: 'start',
+        onDragStart: onDragStart,
+        onDrop: onDrop,
+        onSnapEnd: onSnapEnd,
+        orientation: orientation
+    };
+    game = new Chess();
+    board = new ChessBoard('board', cfg);
+    updateGameInfo();
 };
+
+
+/// DEBUG
+function log(message) {
+    if (console && console.log) {
+        console.log(message);
+    }
+}
