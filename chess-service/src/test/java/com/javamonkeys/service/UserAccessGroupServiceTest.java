@@ -138,11 +138,17 @@ public class UserAccessGroupServiceTest {
     /* Test method: "updateUserAccessGroup()" */
     @Test
     public void updateUserAccessGroupTest() {
-        expect(mockDao.getUserAccessGroupById(testGroup.getId())).andReturn(testGroup).once();
-        expect(mockDao.updateUserAccessGroup(testGroup)).andReturn(true).once();
+        UserAccessGroup existGroup = new UserAccessGroup("exist group", false);
+        existGroup.setId(1);
+
+        UserAccessGroup newGroup = new UserAccessGroup("new group", true);
+        newGroup.setId(1);
+
+        expect(mockDao.getUserAccessGroupById(existGroup.getId())).andReturn(existGroup).once();
+        expect(mockDao.updateUserAccessGroup(newGroup)).andReturn(true).once();
         replay(mockDao);
 
-        assertTrue(userAccessGroupService.updateUserAccessGroup(testGroup.getId(), testGroup));
+        assertTrue(userAccessGroupService.updateUserAccessGroup(existGroup.getId(), newGroup));
         verify(mockDao);
     }
 
