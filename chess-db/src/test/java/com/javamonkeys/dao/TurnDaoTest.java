@@ -43,8 +43,8 @@ public class TurnDaoTest {
         testUser1 = userDao.createUser(new User("testUser1@javamonkeys.com", "12345"));
         testUser2 = userDao.createUser(new User("testUser2@javamonkeys.com", "54321"));
 
-        testGame1 = gameDao.createGame(new Game(testUser1, true, 3600L));
-        testGame2 = gameDao.createGame(new Game(testUser2, false, 1800L));
+        testGame1 = gameDao.createGame(new Game(testUser1, new Date(), true, 3600L));
+        testGame2 = gameDao.createGame(new Game(testUser2, new Date(), false, 1800L));
 
         testTurn1 = turnDao.createTurn(new Turn(testGame1, testUser1, new Date(), Pieces.KING, "test f1", "test e1", "test fen 1"));
         testTurn2 = turnDao.createTurn(new Turn(testGame1, testUser1, new Date(), Pieces.BISHOP, "test f2", "test e2", "test fen 2"));

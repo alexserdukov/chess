@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 @Service
 public class GameService implements IGameService {
 
@@ -19,15 +21,15 @@ public class GameService implements IGameService {
 
     @Override
     @Transactional
-    public Game createGame(Integer userId, Boolean isWhite, Long gameLength) {
-        if (userId == null || isWhite == null || gameLength == null)
+    public Game createGame(Integer userId, Date matchDate, Boolean isWhite, Long gameLength) {
+        if (userId == null || isWhite == null || matchDate == null || gameLength == null)
             return null;
 
         User user = userDao.getUserById(userId);
         if (user == null)
             return null;
 
-        Game game = new Game(user, isWhite, gameLength);
+        Game game = new Game(user, matchDate, isWhite, gameLength);
         return gameDao.createGame(game);
     }
 

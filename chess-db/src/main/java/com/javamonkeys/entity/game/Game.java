@@ -54,9 +54,10 @@ public class Game implements Serializable {
 
     public Game() {}
 
-    public Game(User user, Boolean isWhite, Long gameLength) {
+    public Game(User user, Date matchDate, Boolean isWhite, Long gameLength) {
         setAuthor(user);
-        setMatchDate(new Date());
+        setMatchDate(matchDate);
+        setGameLength(gameLength);
         if (isWhite) {
             setWhite(user);
         } else {
@@ -182,19 +183,18 @@ public class Game implements Serializable {
 
         Game game = (Game) o;
 
-        if (gameLength != game.gameLength) return false;
-        if (whiteTime != game.whiteTime) return false;
-        if (blackTime != game.blackTime) return false;
         if (id != null ? !id.equals(game.id) : game.id != null) return false;
         if (matchDate != null ? !matchDate.equals(game.matchDate) : game.matchDate != null) return false;
         if (author != null ? !author.equals(game.author) : game.author != null) return false;
         if (white != null ? !white.equals(game.white) : game.white != null) return false;
         if (black != null ? !black.equals(game.black) : game.black != null) return false;
         if (startTime != null ? !startTime.equals(game.startTime) : game.startTime != null) return false;
+        if (gameLength != null ? !gameLength.equals(game.gameLength) : game.gameLength != null) return false;
+        if (whiteTime != null ? !whiteTime.equals(game.whiteTime) : game.whiteTime != null) return false;
+        if (blackTime != null ? !blackTime.equals(game.blackTime) : game.blackTime != null) return false;
         if (result != null ? !result.equals(game.result) : game.result != null) return false;
         if (moveText != null ? !moveText.equals(game.moveText) : game.moveText != null) return false;
         return status == game.status;
-
     }
 
     @Override
@@ -205,9 +205,9 @@ public class Game implements Serializable {
         result1 = 31 * result1 + (white != null ? white.hashCode() : 0);
         result1 = 31 * result1 + (black != null ? black.hashCode() : 0);
         result1 = 31 * result1 + (startTime != null ? startTime.hashCode() : 0);
-        result1 = 31 * result1 + (int) (gameLength ^ (gameLength >>> 32));
-        result1 = 31 * result1 + (int) (whiteTime ^ (whiteTime >>> 32));
-        result1 = 31 * result1 + (int) (blackTime ^ (blackTime >>> 32));
+        result1 = 31 * result1 + (gameLength != null ? gameLength.hashCode() : 0);
+        result1 = 31 * result1 + (whiteTime != null ? whiteTime.hashCode() : 0);
+        result1 = 31 * result1 + (blackTime != null ? blackTime.hashCode() : 0);
         result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
         result1 = 31 * result1 + (moveText != null ? moveText.hashCode() : 0);
         result1 = 31 * result1 + (status != null ? status.hashCode() : 0);
