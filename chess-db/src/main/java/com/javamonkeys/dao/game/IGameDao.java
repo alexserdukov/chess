@@ -10,8 +10,6 @@ public interface IGameDao {
 
     Game getGameById(Integer id);
 
-    List<Turn> getTurns(Game game);
-
     boolean updateGame(Game game);
 
     boolean deleteGame(Game game);

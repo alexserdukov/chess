@@ -23,14 +23,6 @@ public class GameDao extends AbstractDao implements IGameDao {
     }
 
     @Override
-    public List<Turn> getTurns(Game game) {
-        Query query = getSession().createQuery("from Turn where game = :game");
-        query.setParameter("game", game);
-
-        return (List<Turn>) query.list();
-    }
-
-    @Override
     public boolean updateGame(Game game) {
         persist(game);
         return true;

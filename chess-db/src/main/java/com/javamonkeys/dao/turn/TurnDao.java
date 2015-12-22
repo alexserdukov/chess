@@ -18,7 +18,7 @@ public class TurnDao extends AbstractDao implements ITurnDao{
     }
 
     @Override
-    public Turn getTurn(Integer id) {
+    public Turn getTurnById(Integer id) {
         return (Turn) getSession().get(Turn.class, id);
     }
 

@@ -20,7 +20,7 @@ public class GameController implements IGameController {
     @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<Game> createGame(@RequestHeader(value = "userId") Integer userId,
                                            @RequestHeader(value = "isWhite") Boolean isWhite,
-                                           @RequestHeader(value = "gameLength") Integer gameLength) {
+                                           @RequestHeader(value = "gameLength") Long gameLength) {
 
         Game game = gameService.createGame(userId, isWhite, gameLength);
         return (game == null)

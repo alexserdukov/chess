@@ -34,13 +34,13 @@ public class Game implements Serializable {
     private Date startTime;
 
     @Column(name = "gameLength")
-    private long gameLength;
+    private Long gameLength;
 
     @Column(name = "whiteTime")
-    private long whiteTime;
+    private Long whiteTime;
 
     @Column(name = "blackTime")
-    private long blackTime;
+    private Long blackTime;
 
     @Column(name = "result")
     private String result;
@@ -54,7 +54,7 @@ public class Game implements Serializable {
 
     public Game() {}
 
-    public Game(User user, Boolean isWhite, long gameLength) {
+    public Game(User user, Boolean isWhite, Long gameLength) {
         setAuthor(user);
         setMatchDate(new Date());
         if (isWhite) {
@@ -64,8 +64,8 @@ public class Game implements Serializable {
         }
     }
 
-    public Game(Date matchDate, User author, User white, User black, Date startTime, long gameLength, long whiteTime,
-                long blackTime, String result, String moveText, GameStatus status) {
+    public Game(Date matchDate, User author, User white, User black, Date startTime, Long gameLength, Long whiteTime,
+                Long blackTime, String result, String moveText, GameStatus status) {
         this.matchDate = matchDate;
         this.author = author;
         this.white = white;
@@ -151,27 +151,27 @@ public class Game implements Serializable {
         this.startTime = startTime;
     }
 
-    public long getGameLength() {
+    public Long getGameLength() {
         return gameLength;
     }
 
-    public void setGameLength(long gameLength) {
+    public void setGameLength(Long gameLength) {
         this.gameLength = gameLength;
     }
 
-    public long getWhiteTime() {
+    public Long getWhiteTime() {
         return whiteTime;
     }
 
-    public void setWhiteTime(long whiteTime) {
+    public void setWhiteTime(Long whiteTime) {
         this.whiteTime = whiteTime;
     }
 
-    public long getBlackTime() {
+    public Long getBlackTime() {
         return blackTime;
     }
 
-    public void setBlackTime(long blackTime) {
+    public void setBlackTime(Long blackTime) {
         this.blackTime = blackTime;
     }
 

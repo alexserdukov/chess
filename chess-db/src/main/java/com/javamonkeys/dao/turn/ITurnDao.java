@@ -8,7 +8,7 @@ import java.util.List;
 public interface ITurnDao {
     Turn createTurn(Turn turn);
 
-    Turn getTurn(Integer id);
+    Turn getTurnById(Integer id);
 
     List<Turn> getTurns(Game game);
 

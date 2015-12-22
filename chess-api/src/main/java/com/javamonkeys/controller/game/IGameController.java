@@ -4,7 +4,7 @@ import com.javamonkeys.entity.game.Game;
 import org.springframework.http.ResponseEntity;
 
 public interface IGameController {
-    ResponseEntity<Game> createGame(Integer userId, Boolean isWhite, Integer gameLength);
+    ResponseEntity<Game> createGame(Integer userId, Boolean isWhite, Long gameLength);
 
     ResponseEntity<Game> getGameById(Integer id);
 

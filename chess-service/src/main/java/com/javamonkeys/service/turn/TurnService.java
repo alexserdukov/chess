@@ -50,7 +50,7 @@ public class TurnService implements ITurnService {
         if (id == null)
             return null;
 
-        return turnDao.getTurn(id);
+        return turnDao.getTurnById(id);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class TurnService implements ITurnService {
         if (id == null || turn == null)
             return false;
 
-        Turn existTurn = turnDao.getTurn(id);
+        Turn existTurn = turnDao.getTurnById(id);
         if (existTurn == null)
             return false;
 
@@ -98,7 +98,7 @@ public class TurnService implements ITurnService {
         if (id == null)
             return false;
 
-        Turn turn = turnDao.getTurn(id);
+        Turn turn = turnDao.getTurnById(id);
         if (turn == null)
             return false;
 

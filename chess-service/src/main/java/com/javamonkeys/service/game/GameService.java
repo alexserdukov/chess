@@ -19,7 +19,7 @@ public class GameService implements IGameService {
 
     @Override
     @Transactional
-    public Game createGame(Integer userId, Boolean isWhite, Integer gameLength) {
+    public Game createGame(Integer userId, Boolean isWhite, Long gameLength) {
         if (userId == null || isWhite == null || gameLength == null)
             return null;
 

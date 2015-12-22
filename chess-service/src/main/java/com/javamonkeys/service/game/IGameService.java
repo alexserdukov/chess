@@ -3,7 +3,7 @@ package com.javamonkeys.service.game;
 import com.javamonkeys.entity.game.Game;
 
 public interface IGameService {
-    Game createGame(Integer userId, Boolean isWhite, Integer gameLength);
+    Game createGame(Integer userId, Boolean isWhite, Long gameLength);
 
     Game getGameById(Integer id);
 

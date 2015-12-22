@@ -1,5 +1,6 @@
-package com.javamonkeys.dao.user;
+package com.javamonkeys.dao;
 
+import com.javamonkeys.dao.user.IUserDao;
 import com.javamonkeys.dao.useraccessgroup.IUserAccessGroupDao;
 import com.javamonkeys.entity.user.User;
 import com.javamonkeys.entity.useraccessgroup.UserAccessGroup;
@@ -34,7 +35,6 @@ public class UserDaoTest {
     public void setup() {
         testGroup1 = userAccessGroupDao.createUserAccessGroup(new UserAccessGroup("test group 1", false));
         testGroup2 = userAccessGroupDao.createUserAccessGroup(new UserAccessGroup("test group 2", false));
-
         testUser = userDao.createUser(new User("testUser@javamonkeys.com", "12345", null, "test user name", testGroup1));
     }
 
@@ -77,18 +77,31 @@ public class UserDaoTest {
         final String newName = "new name";
         final Date newDate = new Date();
 
+        // check differences
         assertNotEquals(newEmail, testUser.getEmail());
         assertNotEquals(newPass, testUser.getPassword());
         assertNotEquals(newName, testUser.getName());
         assertNotEquals(newDate, testUser.getBirthDate());
         assertNotEquals(testGroup2, testUser.getUserAccessGroup());
+
+        // set new values
         testUser.setEmail(newEmail);
         testUser.setPassword(newPass);
         testUser.setName(newName);
         testUser.setBirthDate(newDate);
         testUser.setUserAccessGroup(testGroup2);
 
+        // check set data
+        assertEquals(newEmail, testUser.getEmail());
+        assertEquals(newPass, testUser.getPassword());
+        assertEquals(newName, testUser.getName());
+        assertEquals(newDate, testUser.getBirthDate());
+        assertEquals(testGroup2, testUser.getUserAccessGroup());
+
+        // update user
         assertTrue(userDao.updateUser(testUser));
+
+        // check saved data
         User updatedUser = userDao.getUserById(testUser.getId());
         assertNotNull(updatedUser);
         assertEquals(testUser, updatedUser);

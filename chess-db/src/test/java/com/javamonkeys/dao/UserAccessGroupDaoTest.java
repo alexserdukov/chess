@@ -1,4 +1,4 @@
-package com.javamonkeys.dao.user;
+package com.javamonkeys.dao;
 
 import com.javamonkeys.dao.useraccessgroup.IUserAccessGroupDao;
 import com.javamonkeys.entity.useraccessgroup.UserAccessGroup;
@@ -63,12 +63,22 @@ public class UserAccessGroupDaoTest {
     public void updateUserAccessGroupTest() {
         final String newName = "new test name 1";
 
+        // check differences
         assertNotEquals(newName, testGroup.getName());
         assertFalse(testGroup.getIsAdmin());
+
+        // set new values
         testGroup.setName(newName);
         testGroup.setIsAdmin(true);
 
+        // check set data
+        assertEquals(newName, testGroup.getName());
+        assertTrue(testGroup.getIsAdmin());
+
+        // update user access group
         assertTrue(userAccessGroupDao.updateUserAccessGroup(testGroup));
+
+        // check saved data
         UserAccessGroup updatedGroup = userAccessGroupDao.getUserAccessGroupById(testGroup.getId());
         assertNotNull(updatedGroup);
         assertEquals(testGroup, updatedGroup);
