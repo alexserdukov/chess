@@ -3,6 +3,7 @@ package com.javamonkeys.service.turn;
 import com.javamonkeys.dao.turn.ITurnDao;
 import com.javamonkeys.entity.game.Game;
 import com.javamonkeys.entity.game.GameStatus;
+import com.javamonkeys.entity.turn.Pieces;
 import com.javamonkeys.entity.turn.Turn;
 import com.javamonkeys.entity.user.User;
 import com.javamonkeys.service.game.IGameService;
@@ -24,19 +25,21 @@ public class TurnService implements ITurnService {
 
     @Override
     @Transactional
-    public Turn createTurn(Game game, User user, String startPosition, String endPosition, String fen, Boolean isGameOver) {
+    public Turn createTurn(Game game, User user, Date turnDate, Pieces piece, String startPosition, String endPosition, String fen, Boolean isGameOver) {
         if (game == null
                 || user == null
+                || turnDate == null
+                || piece == null
                 || startPosition == null
                 || endPosition == null
                 || fen == null
                 || isGameOver == null)
             return null;
 
-        Turn turn = new Turn(game, user, new Date(), null, startPosition, endPosition, fen);
+        Turn turn = new Turn(game, user, turnDate, piece, startPosition, endPosition, fen);
         turn = turnDao.createTurn(turn);
 
-        if (turn != null) {
+        if (turn != null && isGameOver) {
             game.setStatus(GameStatus.FINISHED);
             gameService.updateGame(game.getId(), game);
         }
