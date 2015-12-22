@@ -1,6 +1,7 @@
 package com.javamonkeys.controller.turn;
 
 import com.javamonkeys.entity.game.Game;
+import com.javamonkeys.entity.turn.Pieces;
 import com.javamonkeys.entity.turn.Turn;
 import com.javamonkeys.entity.user.User;
 import com.javamonkeys.service.game.IGameService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -41,7 +43,8 @@ public class TurnController implements ITurnController {
         Game game = gameService.getGameById(gameId);
         User user = userService.getUserById(userId);
 
-        Turn turn = turnService.createTurn(game, user, startPosition, endPosition, fen, isGameOver);
+        // TODO: add pieces support
+        Turn turn = turnService.createTurn(game, user, new Date(), Pieces.KING, startPosition, endPosition, fen, isGameOver);
         return  (user == null)
                 ? new ResponseEntity<>(HttpStatus.BAD_REQUEST)
                 : new ResponseEntity<>(turn, HttpStatus.CREATED);
