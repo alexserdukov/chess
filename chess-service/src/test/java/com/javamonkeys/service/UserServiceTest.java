@@ -167,11 +167,17 @@ public class UserServiceTest {
     /* Test method: "updateUser()" */
     @Test
     public void updateUserTest() {
-        expect(mockDao.getUserById(testUser.getId())).andReturn(testUser).once();
-        expect(mockDao.updateUser(testUser)).andReturn(true).once();
+        User existUser = new User("existUser@javamonkeys.com", "12345");
+        existUser.setId(1);
+
+        User newUser = new User("newUser@javamonkeys.com", "54321", new Date(), "new name", testGroup);
+        newUser.setId(1);
+
+        expect(mockDao.getUserById(existUser.getId())).andReturn(existUser).once();
+        expect(mockDao.updateUser(eq(newUser))).andReturn(true).once();
         replay(mockDao);
 
-        assertTrue(userService.updateUser(testUser.getId(), testUser));
+        assertTrue(userService.updateUser(existUser.getId(), newUser));
         verify(mockDao);
     }
 
