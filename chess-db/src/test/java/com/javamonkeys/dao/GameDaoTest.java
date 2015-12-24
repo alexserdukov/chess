@@ -45,7 +45,8 @@ public class GameDaoTest {
                 210L,
                 "test result",
                 "test move text",
-                GameStatus.NEW));
+                GameStatus.NEW,
+                testUser2));
     }
 
     /* Test method: "createGame()" */
@@ -61,7 +62,8 @@ public class GameDaoTest {
                 120L,
                 "result",
                 "moveText",
-                GameStatus.NEW);
+                GameStatus.NEW,
+                testUser1);
         assertNull(game.getId());
         game = gameDao.createGame(game);
         assertNotNull(game);
@@ -98,6 +100,7 @@ public class GameDaoTest {
         final Long newBlackTime = 300L;
         final String newResult = "new result";
         final String newMoveText = "new move text";
+        final User newWinner = testUser1;
         final GameStatus newGameStatus = GameStatus.FINISHED;
 
         // check differences
@@ -112,6 +115,7 @@ public class GameDaoTest {
         assertNotEquals(newResult, testGame.getResult());
         assertNotEquals(newMoveText, testGame.getMoveText());
         assertNotEquals(newGameStatus, testGame.getStatus());
+        assertNotEquals(newWinner, testGame.getWinner());
 
         // set new values
         testGame.setMatchDate(newMatchDate);
@@ -125,6 +129,7 @@ public class GameDaoTest {
         testGame.setResult(newResult);
         testGame.setMoveText(newMoveText);
         testGame.setStatus(newGameStatus);
+        testGame.setWinner(newWinner);
 
         // check set data
         assertEquals(newMatchDate, testGame.getMatchDate());
@@ -138,6 +143,7 @@ public class GameDaoTest {
         assertEquals(newResult, testGame.getResult());
         assertEquals(newMoveText, testGame.getMoveText());
         assertEquals(newGameStatus, testGame.getStatus());
+        assertEquals(newWinner, testGame.getWinner());
 
         // update game
         assertTrue(gameDao.updateGame(testGame));

@@ -166,7 +166,8 @@ public class GameServiceTest {
                 300L,
                 "result",
                 "move text",
-                GameStatus.FINISHED);
+                GameStatus.FINISHED,
+                testUser2);
         newGame.setId(1);
 
         expect(mockGameDao.getGameById(existGame.getId())).andReturn(existGame).once();

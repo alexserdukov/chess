@@ -63,6 +63,7 @@ public class GameService implements IGameService {
         existGame.setResult(game.getResult());
         existGame.setMoveText(game.getMoveText());
         existGame.setStatus(game.getStatus());
+        existGame.setWinner(game.getWinner());
 
         return gameDao.updateGame(existGame);
     }

@@ -52,6 +52,10 @@ public class Game implements Serializable {
     @Enumerated(EnumType.STRING)
     private GameStatus status;
 
+    @ManyToOne
+    @JoinColumn(name = "winnerId")
+    private User winner;
+
     public Game() {}
 
     public Game(User user, Date matchDate, Boolean isWhite, Long gameLength) {
@@ -66,7 +70,7 @@ public class Game implements Serializable {
     }
 
     public Game(Date matchDate, User author, User white, User black, Date startTime, Long gameLength, Long whiteTime,
-                Long blackTime, String result, String moveText, GameStatus status) {
+                Long blackTime, String result, String moveText, GameStatus status, User winner) {
         this.matchDate = matchDate;
         this.author = author;
         this.white = white;
@@ -78,6 +82,7 @@ public class Game implements Serializable {
         this.result = result;
         this.moveText = moveText;
         this.status = status;
+        this.winner = winner;
     }
 
     public Integer getId() {
@@ -176,6 +181,14 @@ public class Game implements Serializable {
         this.blackTime = blackTime;
     }
 
+    public User getWinner() {
+        return winner;
+    }
+
+    public void setWinner(User winner) {
+        this.winner = winner;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -194,6 +207,7 @@ public class Game implements Serializable {
         if (blackTime != null ? !blackTime.equals(game.blackTime) : game.blackTime != null) return false;
         if (result != null ? !result.equals(game.result) : game.result != null) return false;
         if (moveText != null ? !moveText.equals(game.moveText) : game.moveText != null) return false;
+        if (winner != null ? !winner.equals(game.winner) : game.winner != null) return false;
         return status == game.status;
     }
 
@@ -211,6 +225,7 @@ public class Game implements Serializable {
         result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
         result1 = 31 * result1 + (moveText != null ? moveText.hashCode() : 0);
         result1 = 31 * result1 + (status != null ? status.hashCode() : 0);
+        result1 = 31 * result1 + (winner != null ? winner.hashCode() : 0);
         return result1;
     }
 }
