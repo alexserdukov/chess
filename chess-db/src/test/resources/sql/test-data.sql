@@ -1,3 +1,8 @@
+DELETE FROM TURNS;
+DELETE FROM GAMES;
+DELETE FROM USERS;
+DELETE FROM USERACCESSGROUPS;
+
 INSERT INTO USERACCESSGROUPS (ID, NAME, ISADMIN) VALUES
   (1, 'admin', TRUE),
   (2, 'user', FALSE),
@@ -11,11 +16,14 @@ INSERT INTO USERS (ID, EMAIL, PASSWORD, NAME, BIRTHDATE, USERACCESSGROUP_ID) VAL
   (5, 'DeleteUser@javamonkeys.com', '12345', 'delete user', null, 2);
 
 
-INSERT INTO GAMES (ID, MATCHDATE, AUTHOR_ID, WHITE_ID, BLACK_ID, STARTTIME, GAMELENGTH, WHITETIME, BLACKTIME, RESULT, MOVETEXT, STATUS) VALUES
-  (1, null, 1, 2, 1, null, 500, 500, 500, '0.5-0.5','1.e4 e5', 'IN_PROGRESS'),
-  (2, null, 1, 1, 3, null, 500, 500, 500, '','1.e4 e5', 'IN_PROGRESS'),
-  (3, null, 2, 2, 3, null, 500, 500, 500, '','1.e4 e5', 'ON_HOLD'),
-  (4, null, 2, 2, NULL, null, 500, 500, 500, '','1.e4 e5', 'NEW');
+INSERT INTO GAMES (ID, MATCHDATE, AUTHOR_ID, WHITE_ID, BLACK_ID, STARTTIME, GAMELENGTH, WHITETIME, BLACKTIME, RESULT, MOVETEXT, STATUS, WINNERID) VALUES
+  (1, null, 1, 2, 1, null, 500, 500, 500, '0.5-0.5','1.e4 e5', 'IN_PROGRESS', null),
+  (2, null, 1, 1, 3, null, 500, 500, 500, '','1.e4 e5', 'IN_PROGRESS', null),
+  (3, null, 2, 2, 3, null, 500, 500, 500, '','1.e4 e5', 'ON_HOLD', null),
+  (4, null, 2, 2, NULL, null, 500, 500, 500, '','1.e4 e5', 'NEW', null),
+  (5, null, 2, 2, 3, null, 500, 500, 500, '','1.e4 e5', 'FINISHED', 2),
+  (6, null, 2, 2, 3, null, 500, 500, 500, '','1.e4 e5', 'FINISHED', 2),
+  (7, null, 1, 1, 2, null, 500, 500, 500, '','1.e4 e5', 'FINISHED', 1);
 
 INSERT INTO TURNS (ID, TURNDATE, USER_ID, GAME_ID, PIECE, STARTPOSITION, ENDPOSITION, FEN) VALUES
   (1, null, 1, 1, 'PAWN', 'e2', 'e4', '00000'),
