@@ -35,8 +35,8 @@ public class StatisticsDaoTest {
     @Autowired
     IGameDao gameDao;
 
-    User testUser1, testUser2;
-    Game testGame1, testGame2, testGame3, testGame4;
+    private User testUser1, testUser2;
+    private Game testGame1, testGame2, testGame3, testGame4;
 
     @Before
     public void init() {
