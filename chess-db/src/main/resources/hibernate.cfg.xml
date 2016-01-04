@@ -6,6 +6,8 @@
 
     <session-factory>
         <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="show_sql">true</property>
+        <property name="format_sql">true</property>
         <mapping class="com.javamonkeys.entity.user.User"/>
         <mapping class="com.javamonkeys.entity.useraccessgroup.UserAccessGroup"/>
         <mapping class="com.javamonkeys.entity.game.Game"/>

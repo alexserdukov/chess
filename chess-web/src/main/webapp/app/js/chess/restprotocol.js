@@ -2,6 +2,7 @@ var basicUrl = "http://localhost:8555";
 var restUserPath = basicUrl + "/api/users";
 var restGamePath = basicUrl + "/api/games";
 var restTurnPath = basicUrl + "/api/turns";
+var restStatisticsPath = basicUrl + "/api/statistics";
 
 // USERS
 
@@ -95,6 +96,26 @@ function restCreateNewTurn(gameId, userId, startPosition, endPosition, fen, isGa
 function restGetLastTurn(gameId, cbDone, cbFail) {
     $.ajax({
         url: restTurnPath + "?gameId=" + gameId + "&lastTurn=true",
+        type: "GET"
+    })
+        .done(cbDone)
+        .fail(cbFail);
+}
+
+// STATISTICS
+
+function restGetGlobalStatistics(cbDone, cbFail) {
+    $.ajax({
+        url: restStatisticsPath,
+        type: "GET"
+    })
+        .done(cbDone)
+        .fail(cbFail);
+}
+
+function restGetUserStatistics(userId, cbDone, cbFail) {
+    $.ajax({
+        url: restStatisticsPath + "?userId=" + userId,
         type: "GET"
     })
         .done(cbDone)

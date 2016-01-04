@@ -9,6 +9,8 @@
     <script src="js/jquery.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/chess/authentication.js"></script>
+    <script src="js/chess/restprotocol.js"></script>
+    <script src="js/chess/statistics.js"></script>
 </head>
 
 <nav class="navbar navbar-default">
@@ -43,16 +45,13 @@
         <h1>Statistics</h1>
     </div>
 
-    <p class="lead text-center">Alexander Filippov</p>
+    <p id="user-name" class="lead text-center"></p>
     <div class="container">
         <table class="table table-bordered tab">
             <thead>
             <tr><th>key</th><th>value</th></tr>
             </thead>
-            <tbody>
-            <tr><td>games (total)</td><td>100</td></tr>
-            <tr><td>games (won)</td><td>67</td></tr>
-            <tr><td>games (lost)</td><td>33</td></tr>
+            <tbody id="user-statistics">
             </tbody>
         </table>
     </div>
@@ -61,19 +60,9 @@
     <div class="container">
         <table class="table table-bordered tab">
             <thead>
-                <tr><th>place</th><th>user</th><th>wins</th></tr>
+                <tr><th>place</th><th>user</th><th>wins</th><th>loses</th></tr>
             </thead>
-            <tbody>
-                <tr><td>1</td><td>kasparov, garry</td><td>225</td></tr>
-                <tr><td>2</td><td>karpov, anatoliy</td><td>218</td></tr>
-                <tr><td>3</td><td>'e-m-p-t-y'</td><td></td></tr>
-                <tr><td>4</td><td>'e-m-p-t-y'</td><td></td></tr>
-                <tr><td>5</td><td>'e-m-p-t-y'</td><td></td></tr>
-                <tr><td>6</td><td>'e-m-p-t-y'</td><td></td></tr>
-                <tr><td>7</td><td>'e-m-p-t-y'</td><td></td></tr>
-                <tr><td>8</td><td>'e-m-p-t-y'</td><td></td></tr>
-                <tr><td>9</td><td>'e-m-p-t-y'</td><td></td></tr>
-                <tr><td>10</td><td>'e-m-p-t-y'</td><td></td></tr>
+            <tbody id="global-statistics">
             </tbody>
         </table>
     </div>
