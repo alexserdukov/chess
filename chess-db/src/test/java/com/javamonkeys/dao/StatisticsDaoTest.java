@@ -1,6 +1,8 @@
 package com.javamonkeys.dao;
 
+import com.javamonkeys.dao.game.IGameDao;
 import com.javamonkeys.dao.statistics.IStatisticsDao;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +19,16 @@ public class StatisticsDaoTest {
     @Autowired
     IStatisticsDao statisticsDao;
 
+    @Autowired
+    IGameDao gameDao;
+
+    @Before
+    public void init() {
+//        gameDao.
+    }
+
     @Test
     public void testGlobal() {
-        statisticsDao.getGlobalStatistics();
+//        statisticsDao.getGlobalStatistics();
     }
 }
