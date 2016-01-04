@@ -1,36 +1,15 @@
 package com.javamonkeys.dao.user;
 
-import java.util.Date;
+import com.javamonkeys.entity.user.User;
 
 public interface IUserDao {
+    User createUser(User user);
 
-    public User getUserById(Integer id);
+    User getUserById(Integer id);
 
-    public User getUserByEmail(String email);
+    User getUserByEmail(String email);
 
-    public User getUserByToken(String token);
+    boolean updateUser(User user);
 
-    public User createUser(String email, String password,  UserAccessGroup userAccessGroup) throws UserAlreadyExistException;
-
-    public User createUser(String email, String password, UserAccessGroup userAccessGroup, Date birthDate) throws UserAlreadyExistException;
-
-    public void deleteUser(User user) throws UserNotFoundException;
-
-    public void updateUser(User user) throws UserNotFoundException;
-
-    public UserAccessGroup getUserAccessGroupById(Integer id);
-
-    public UserAccessGroup getUserAccessGroupByName(String name);
-
-    public UserAccessGroup createUserAccessGroup(String name, boolean isAdmin) throws UserAccessGroupAlreadyExistException;
-
-    public void deleteUserAccessGroup(UserAccessGroup userAccessGroup) throws UserAccessGroupNotFoundException;
-
-    public User login(String email, String password) throws IncorrectUserCredentialsException;
-
-    public void logout(User user);
-
-    public void register(String email, String password) throws UserAlreadyExistException;
-
-    public String generateNewUniqueToken();
+    boolean deleteUser(User user);
 }

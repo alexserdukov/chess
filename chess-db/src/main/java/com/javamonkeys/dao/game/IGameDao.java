@@ -1,28 +1,16 @@
 package com.javamonkeys.dao.game;
 
-import com.javamonkeys.dao.user.User;
+import com.javamonkeys.entity.game.Game;
+import com.javamonkeys.entity.turn.Turn;
 
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 public interface IGameDao {
+    Game createGame(Game game);
 
-    public Game getGame(int id);
+    Game getGameById(Integer id);
 
-    public Game createGame(User user, Boolean isWhite, long gameLength);
+    boolean updateGame(Game game);
 
-    public Game updateGame(Game game) throws GameNotFoundException;
-
-    public void deleteGame(Game game) throws GameNotFoundException;
-
-    public void deleteGame(int id) throws GameNotFoundException;
-
-    public void saveTurn(int id, String turn) throws GameNotFoundException;
-
-    public ArrayList<Game> getListGames(User author);
-
-    public ArrayList<Game> getListGames(GameStatus status);
-
-    public ArrayList<Turn> getGamesTurns(Game game);
+    boolean deleteGame(Game game);
 }
